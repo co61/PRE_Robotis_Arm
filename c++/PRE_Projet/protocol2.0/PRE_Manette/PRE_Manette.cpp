@@ -95,6 +95,11 @@
 #define DXL_ID_BRAS3  14
 #define DXL_ID_PINCE  15
 
+
+#define GOAL_POSE1    2280
+#define GOAL_POSE2    2040
+#define GOAL_POSE3    2850
+
 // Use the actual port assigned to the U2D2.
 // ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
 #define DEVICENAME  "/dev/ttyUSB0"
@@ -313,7 +318,6 @@ void lecture(){
 
 void parametrer(){
 
-
     printf("\n================================\nChoix ID de paramètres (1 à 5)\n1 -> BASE\n2 -> BAS du BRAS\n3 -> MILIEU du BRAS\n4 -> HAUT du BRAS\n5 -> PINCE\n(Echap pour revenir en arrière)\n");
     int chr = getch();
     int lecture_id = 0;
@@ -353,8 +357,6 @@ void parametrer(){
         printf("===========Paramétrer des données de PINCE===========\n");
         break;
     }
-
-
 
   std::string lecture_str;
   while(1){
@@ -405,12 +407,7 @@ void parametrer(){
 
     dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, lecture_id, lecture_addr, dxl_lecture + dt, &dxl_error);
     printError(dxl_comm_result, dxl_error);
-
-    
   }
-
-
-
 }
 
 
@@ -492,22 +489,13 @@ void bouger(){
 
   }
 
-  Torque_disable_all();
   
 }
 
 
 
-
-
-
-
-
-/**
- * Reads a joystick event from the joystick device.
- *
- * Returns 0 on success. Otherwise -1 is returned.
- */
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//Joystick lib
 int read_event(int fd, struct js_event *event)
 {
     ssize_t bytes;
@@ -517,13 +505,9 @@ int read_event(int fd, struct js_event *event)
     if (bytes == sizeof(*event))
         return 0;
 
-    /* Error, could not read full event. */
     return -1;
 }
 
-/**
- * Returns the number of axes on the controller or 0 if an error occurs.
- */
 size_t get_axis_count(int fd)
 {
     __u8 axes;
@@ -534,9 +518,6 @@ size_t get_axis_count(int fd)
     return axes;
 }
 
-/**
- * Returns the number of buttons on the controller or 0 if an error occurs.
- */
 size_t get_button_count(int fd)
 {
     __u8 buttons;
@@ -546,22 +527,11 @@ size_t get_button_count(int fd)
     return buttons;
 }
 
-/**
- * Current state of an axis.
- */
 struct axis_state {
     short x, y;
 };
 
-/**
- * Keeps track of the current axis state.
- *
- * NOTE: This function assumes that axes are numbered starting from 0, and that
- * the X axis is an even number, and the Y axis is an odd number. However, this
- * is usually a safe assumption.
- *
- * Returns the axis that the event indicated.
- */
+
 size_t get_axis_state(struct js_event *event, struct axis_state axes[3])
 {
     size_t axis = event->number / 2;
@@ -577,151 +547,246 @@ size_t get_axis_state(struct js_event *event, struct axis_state axes[3])
     return axis;
 }
 
+void pose_init(int &dt1, int &dt2, int &dt3){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  int32_t dxl_lecture = 0;
+  int delta = 30;
+
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt1 = (dxl_lecture > GOAL_POSE1) ? -delta : delta;
+  
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt2 = (dxl_lecture > GOAL_POSE2) ? -delta : delta;
+  
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt3 = (dxl_lecture > GOAL_POSE3) ? -delta : delta;
+
+}
 
 
+void pose_moove(int dt1, int dt2, int dt3){
+
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  int goal = 1;
+  int done1 = 0;
+  int done2 = 0;
+  int done3 = 0;
+
+  int32_t dxl_lecture1 = 0;
+  int32_t dxl_lecture2 = 0;
+  int32_t dxl_lecture3 = 0;
+
+  //Ouverture pince
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_GOAL_POSITION, 1740, &dxl_error);
+
+  while(goal){
+    //Récupération de la position des moteurs
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture1, &dxl_error);
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture2, &dxl_error);
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture3, &dxl_error);
+
+    if((dxl_lecture1 > GOAL_POSE1 + 20)||(dxl_lecture1 < GOAL_POSE1 - 20))
+      dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_GOAL_POSITION, dxl_lecture1 + dt1, &dxl_error);
+    else
+      done1 = 1;
+
+    if((dxl_lecture2 > GOAL_POSE2 + 20)||(dxl_lecture2 < GOAL_POSE2 - 20))
+      dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_GOAL_POSITION, dxl_lecture2 + dt2, &dxl_error);
+    else
+      done2 = 1;
+
+    if((dxl_lecture3 > GOAL_POSE3 + 20)||(dxl_lecture3 < GOAL_POSE3 - 20))
+      dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_GOAL_POSITION, dxl_lecture3 + dt3, &dxl_error);
+    else
+      done3 = 1;
 
 
+    sleep(0.1);
+    printf("IN:  %d  %d  %d\n", done1, done2, done3);
+    printf("POS:  %d  %d  %d\n", dxl_lecture1, dxl_lecture2, dxl_lecture3);
 
+    if(done1 == 1){
+      if(done2 == 1){
+        if(done3 == 1){
+          goal = 0;
+        }
+      }
+    }
+  }
+}
 
+void pose(){
+  //Controle les moteurs
+  Torque_enable_all();
+
+  int dt1, dt2, dt3;
+
+  //Récupération du sens de rotation voulue
+  pose_init(dt1, dt2, dt3);
+
+  //Mouvement des moteurs
+  pose_moove(dt1, dt2, dt3);
+
+  //Relache les moteurs
+  Torque_disable_all();
+
+  printf("INIT POSE TERMINE\n");
+
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void moteur_dt(int dt_base, int dt_bras1, int dt_bras2, int dt_bras3, int dt_pince){
+
+  int32_t dxl_lecture = 0;
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  if(dt_pince != 0){
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+    dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_GOAL_POSITION, dxl_lecture + dt_pince, &dxl_error);
+    printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_PINCE, dxl_lecture + dt_pince);
+  }
+
+  if(dt_bras1 != 0){
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+    dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_GOAL_POSITION, dxl_lecture + dt_bras1, &dxl_error);
+    printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BRAS1, dxl_lecture + dt_bras1);
+  }
+
+  if(dt_bras2 != 0){
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+    dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_GOAL_POSITION, dxl_lecture + dt_bras2, &dxl_error);
+    printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BRAS2, dxl_lecture + dt_bras2);
+  }
+
+  if(dt_bras3 != 0){
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+    dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_GOAL_POSITION, dxl_lecture + dt_bras3, &dxl_error);
+    printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BRAS3, dxl_lecture + dt_bras3);
+  }
+
+  if(dt_base != 0){
+    dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+    dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_GOAL_POSITION, dxl_lecture - dt_base, &dxl_error);
+    printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BASE, dxl_lecture - dt_base);
+  }
+
+}
 
 
 void manette(){
 
   Torque_enable_all();
+  
+  int dt_base = 0;
+  int dt_bras1 = 0;
+  int dt_bras2 = 0;
+  int dt_bras3 = 0;
+  int dt_pince = 0;
 
-int32_t dxl_lecture = 0;
-  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
 
-  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+  const char *device;
+  int js;
+  struct js_event event;
+  struct axis_state axes[3] = {0};
+  size_t axis;
 
-const char *device;
-    int js;
-    struct js_event event;
-    struct axis_state axes[3] = {0};
-    size_t axis;
 
-    int dt_base = 0;
-    int dt_bras1 = 0;
-    int dt_bras2 = 0;
-    int dt_bras3 = 0;
-    int dt_pince = 0;
 
-    device = "/dev/input/js0";
+  device = "/dev/input/js0";
 
-    js = open(device, O_NONBLOCK);
+  js = open(device, O_NONBLOCK);
 
-    if (js == -1)
-        perror("Could not open joystick");
+  if (js == -1)
+      perror("Could not open joystick");
 
-    /* This loop will exit if the controller is unplugged. */
-    int quit = 1;
-    while (quit)
-    {
-      if(read_event(js, &event) == 0){
-        switch (event.type)
-        {
-            case JS_EVENT_BUTTON:
-                printf("Button %u %s\n", event.number, event.value ? "pressed" : "released");
-                if ((event.number == 0)&&(event.value)){
-                  
-                }
-                else if((event.number == 1)&&(event.value)){
+  /* This loop will exit if the controller is unplugged. */
+  int quit = 1;
+  while (quit)
+  {
+    if(read_event(js, &event) == 0){
+      switch (event.type)
+      {
+          case JS_EVENT_BUTTON:
+              printf("Button %u %s\n", event.number, event.value ? "pressed" : "released");
+              if ((event.number == 0)&&(event.value)){
+                pose();
+              }
+              else if((event.number == 1)&&(event.value)){
 
-                }
-                else if((event.number == 2)&&(event.value)){
-                  
-                }
-                else if((event.number == 3)&&(event.value)){
-                  
-                }
-                else if((event.number == 6)&&(event.value)){
-                  quit = 0;
-                }
-                break;
-            case JS_EVENT_AXIS:
-                axis = get_axis_state(&event, axes);
-                if (axis < 7){
-                    printf("Axis %zu at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
-                    if(axis == 0){
-                      if((int(axes[axis].y/3000)>5)||(int(axes[axis].y/3000)<-5))
-                        dt_bras2 = int(axes[axis].y/3000)*3;
-                      else
-                        dt_bras2 = 0;
+              }
+              else if((event.number == 2)&&(event.value)){
+                
+              }
+              else if((event.number == 3)&&(event.value)){
+                
+              }
+              else if((event.number == 6)&&(event.value)){
+                quit = 0;
+              }
+              break;
+          case JS_EVENT_AXIS:
+              axis = get_axis_state(&event, axes);
+              if (axis < 7){
+                  printf("Axis %zu at (%6d, %6d)\n", axis, axes[axis].x, axes[axis].y);
+                  if(axis == 0){
+                    if((int(axes[axis].y/3000)>5)||(int(axes[axis].y/3000)<-5))
+                      dt_bras2 = int(axes[axis].y/3000)*3;
+                    else
+                      dt_bras2 = 0;
 
-                      if((int(axes[axis].x/3000)>5)||(int(axes[axis].x/3000)<-5))
-                        dt_bras1 = int(axes[axis].x/3000)*3;
-                      else
-                        dt_bras1 = 0;
+                    if((int(axes[axis].x/3000)>5)||(int(axes[axis].x/3000)<-5))
+                      dt_bras1 = int(axes[axis].x/3000)*4;
+                    else
+                      dt_bras1 = 0;
+                  }
+                  else if(axis == 1){
+                    if((int(axes[axis].y/3000)>5)||(int(axes[axis].y/3000)<-5))
+                      dt_base = int(axes[axis].y/3000)*3;
+                    else
+                      dt_base = 0;
+                    if((int(axes[axis].x)) > 0)
+                      dt_pince = -10;
+                    else
+                      dt_pince = 0;
                     }
-                    else if(axis == 1){
-                      if((int(axes[axis].y/3000)>5)||(int(axes[axis].y/3000)<-5))
-                        dt_base = int(axes[axis].y/3000)*3;
-                      else
-                        dt_base = 0;
-                      if((int(axes[axis].x)) > 0)
-                        dt_pince = -10;
-                      else
-                        dt_pince = 0;
-                      }
-                    else if(axis == 2){
-                      if((int(axes[axis].x/3000)>5)||(int(axes[axis].x/3000)<-5))
-                        dt_bras3 = int(axes[axis].x/3000)*3;
-                      else
-                        dt_bras3 = 0;
-                      
-                      if((int(axes[axis].y))  > 0)
-                        dt_pince = 10;
-                      else
-                        dt_pince = 0;
-                      }
-                }
+                  else if(axis == 2){
+                    if((int(axes[axis].x/3000)>5)||(int(axes[axis].x/3000)<-5))
+                      dt_bras3 = int(axes[axis].x/3000)*3;
+                    else
+                      dt_bras3 = 0;
+                    
+                    if((int(axes[axis].y))  > 0)
+                      dt_pince = 10;
+                    else
+                      dt_pince = 0;
+                    }
+              }
 
-                break;
-            default:
-                /* Ignore init events. */
-                break;
-        }
+              break;
+          default:
+              /* Ignore init events. */
+              break;
       }
-        
-        fflush(stdout);
-
-        if(dt_base != 0){
-          dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-          dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_GOAL_POSITION, dxl_lecture - dt_base, &dxl_error);
-          printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BASE, dxl_lecture - dt_base);
-        }
-        
-        if(dt_pince != 0){
-          dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-          dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_GOAL_POSITION, dxl_lecture + dt_pince, &dxl_error);
-          printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_PINCE, dxl_lecture + dt_pince);
-        }
-
-        if(dt_bras1 != 0){
-          dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-          dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_GOAL_POSITION, dxl_lecture + dt_bras1, &dxl_error);
-          printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BRAS1, dxl_lecture + dt_bras1);
-        }
-
-        if(dt_bras2 != 0){
-          dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-          dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_GOAL_POSITION, dxl_lecture + dt_bras2, &dxl_error);
-          printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BRAS2, dxl_lecture + dt_bras2);
-        }
-
-        if(dt_bras3 != 0){
-          dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-          dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_GOAL_POSITION, dxl_lecture + dt_bras3, &dxl_error);
-          printf("Mouvement moteur: %d, Position: %d\n", DXL_ID_BRAS3, dxl_lecture + dt_bras3);
-        }
     }
+      
+    fflush(stdout);
 
-    close(js);
 
-
+    moteur_dt(dt_base, dt_bras1, dt_bras2, dt_bras3, dt_pince);
+    
+  }
+  //Fermeture du joystick
+  close(js);
+  pose();
 }
 
-int main() {
+int init(){
   // Initialize PortHandler instance
   // Set the port path
   // Get methods and members of PortHandlerLinux or PortHandlerWindows
@@ -731,13 +796,6 @@ int main() {
   // Set the protocol version
   // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
   packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
-
-
-  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
-  int dxl_goal_position[2] = {MINIMUM_POSITION_LIMIT, MAXIMUM_POSITION_LIMIT};         // Goal position
-
-  uint8_t dxl_error = 0;                           // DYNAMIXEL error
-  int32_t dxl_lecture = 0;  
 
 
   // Open port
@@ -762,8 +820,18 @@ int main() {
     return 0;
   }
 
+  //pose();
   // Disable DYNAMIXEL Torque
   Torque_disable_all();
+
+  return 1;
+
+}
+
+int main() {
+
+  if(!init())
+    return 0;
 
   printf("Lancement du programme.\n");
   while(1) {
@@ -793,7 +861,7 @@ int main() {
   }
 
 
-  Torque_disable_all();
+  pose();
 
   // Close port
   portHandler->closePort();
