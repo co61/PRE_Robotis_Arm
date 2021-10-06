@@ -25,14 +25,4 @@ switch(moteur_bloque)
         p_y = evalin('base', 'p3_y');
 end
 
-
-
-
-
-
-
-
-
-
-
 end
