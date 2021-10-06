@@ -1,5 +1,6 @@
 #include "moteur.hpp"
 #include "moteur.cpp"
+#include "position.cpp"
 //Variables globales
 
 //initialisé dans moteur.cpp
@@ -345,7 +346,11 @@ void moteur_dt(int dt_base, int dt_bras1, int dt_bras2, int dt_bras3, int dt_pin
   if(dt_base != 0)
     mooveBase(dt_base);
 }
-
+void readPosition(){
+  while(1){
+    getPositionPince();
+  }
+}
 
 void manette(){
   Torque_enable_all();
@@ -457,7 +462,7 @@ int main() {
 
   printf("Lancement du programme.\n");
   while(1) {
-    printf("\n============================================\nb -> bouger\nl -> lire\np -> paramétrer\nm -> manette\n");
+    printf("\n============================================\nb -> bouger\nl -> lire\np -> paramétrer\nm -> manette\nw -> lire position\n");
     int chr = getch();
 
     if (chr == ESC_ASCII_VALUE)
@@ -477,6 +482,9 @@ int main() {
     case 'm' :
     	manette();
     	break;
+    case 'w' :
+      readPosition();
+      break;
     default:
         break;
     }
