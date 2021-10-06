@@ -65,7 +65,7 @@ DEVICENAME                  = 'COM5';       % Check which port is being used on 
 TORQUE_ENABLE               = 1;            % Value for enabling the torque
 TORQUE_DISABLE              = 0;            % Value for disabling the torque
 DXL_MINIMUM_POSITION_VALUE  = 10;            % Dynamixel will rotate between this value
-DXL_MAXIMUM_POSITION_VALUE  = 500;       % and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
+DXL_MAXIMUM_POSITION_VALUE  = 4000;       % and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
 DXL_MOVING_STATUS_THRESHOLD = 20;           % Dynamixel moving status threshold
 
 ESC_CHARACTER               = 'e';          % Key for escaping loop
