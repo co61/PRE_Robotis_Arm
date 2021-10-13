@@ -27,7 +27,7 @@ teta3_init=deg2rad(0);
 %coordonnées du point souhaité
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-point_desire = [0 -20];
+point_desire = [-20 20];
 x_desire = point_desire(1,1);
 y_desire = point_desire(1,2);
 
@@ -58,7 +58,12 @@ viscircles([0,0],rayon1,'color','blue')
 % modélisation du probleme en se ramenant à 2 bras
 %théorème al_kashi
 teta_prime = acos((d1^2 + rayon^2 - d2^2)/(2 * d1* rayon))
+teta_prime_deg = rad2deg(teta_prime)
 
+% on a la relation teta_prime_prime = 180 - teta_prime_deg + teta2_init_deg 
+%teta_prime_prime_deg = 180 - teta_prime_deg - rad2deg(teta3_init)
+
+% teta_prime = angle entre rayon et d1
 
 point_atteignable = 0;
 %vérifier que le point est atteignable en bloquant le moteur2
@@ -81,29 +86,43 @@ P3 = d1*cos(teta1_init)+ d2*cos(teta2_init) + d3*cos(teta3_init) + i* (d1*sin(te
 %fonction que j'ai définit dans une fonction matlab pour ne pas surcharger
 %le code
 affichage_robot(P1,P2,P3);
-%line( [0,real(P2)]',[ 0 , imag(P2) ]','color','b' )
 % on fait le reste que si le point est atteignable
 if point_atteignable ~= 1
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % résolution du système afin fe trouver les angles
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-    
     fun = @root; %fonction que j'ai défini dans une fonction matlab
     teta0 = [deg2rad(0),deg2rad(0)];
     [new_teta,fval,exitflag1,output] = fsolve(fun,teta0);
     
     %new teta est composé de teta_cherche et teta 3
-    %on a la relation teta_1 = teta_prime + teta_cherche
-    teta1 = new_teta(1,1) + teta_prime;
-    % calcul des différents points
-    P1 = d1*cos(teta1) + 1i* d1*sin(teta1);
-    P2 = ( d1*cos(teta1))+ d2*cos( teta2_init ) + 1i* ( d1*sin(teta1) + d2*sin( teta2_init ));
-    P3 = ( d1*cos(teta1) + d2*cos( teta2_init )+ d3*cos(new_teta(1,2))) + 1i * ( d1*sin(teta1) + d2*sin( teta2_init ) + d3*sin(new_teta(1,2)) );
+    %on a la relation teta_1 = teta_prime + new_teta(1,1)
+    new_teta_deg = rad2deg(new_teta)
+    teta1 =  new_teta(1,1) + teta_prime;
     
+    % calcul des différents points
     P4 = rayon*cos(new_teta(1,1)) + 1i * rayon*sin(new_teta(1,1));
-    P5 = rayon*cos(new_teta(1,1)) + d3*cos(new_teta(1,2)) + 1i * ( rayon*sin(new_teta(1,1)) +d3*sin(new_teta(1,2)) );
+    P5 = rayon*cos(new_teta(1,1)) + d3*cos(new_teta(1,2)) + 1i * ( rayon*sin(new_teta(1,1)) + d3*sin(new_teta(1,2)) );
+    %affichage_robot(P4,P5,P5) 
+        
+    P1 = d1*cos(teta1 ) + 1i* d1*sin(teta1);
+    
+    %calcul de l'angle teta2 à partir de P1 et P4
+    rapport  =(imag(P4) - imag(P1)) / (real(P4) - real(P1));
+    if (real(P4) > real(P1))
+         teta2 = atan( rapport );
+    else
+        disp('real(p4) < real(p1)')
+        teta2 = atan( rapport ) + pi;
+    end
+    
+   
+    
+    P2 =  d1*cos(teta1)+ d2*cos(  teta2  ) + 1i* ( d1*sin(teta1) + d2*sin( teta2 ));
+    P3 =  d1*cos(teta1) + d2*cos( teta2 )+ d3*cos(new_teta(1,2)) + 1i * ( d1*sin(teta1) + d2*sin( teta2 ) + d3*sin(new_teta(1,2))) ;
     affichage_robot(P1,P2,P3);
-    affichage_robot(P4,P5,P3);
+    
+    
     
 end

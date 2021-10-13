@@ -41,7 +41,7 @@ ESC_CHARACTER               = 'e';          % Key for escaping loop
 COMM_SUCCESS                = 0;            % Communication Success result value
 COMM_TX_FAIL                = -1001;        % Communication Tx Failed
 
-outputArg1 = 1;
+outputArg1 = 10;
 outputArg2 = 2;
 end
 
