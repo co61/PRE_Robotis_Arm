@@ -1,6 +1,6 @@
 #include "moteur.hpp"
 #include "moteur.cpp"
-#include "position.cpp"
+#include "getPosition.cpp"
 //Variables globales
 
 //initialisé dans moteur.cpp
