@@ -1,0 +1,7 @@
+Manette -> Première version avec Manette et Clavier - 22/09
+
+Modules -> Encapsulation dans différents fichiers - 29/09
+
+Leap -> Introduction du Leap avec ses différentes librairies - 13/10
+
+Pattern -> En cours - Le but est d'améliorer l'encapsulation
