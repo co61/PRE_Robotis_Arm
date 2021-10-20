@@ -25,13 +25,13 @@ Angles calculate_angles(float Xobj, float Yobj)
     if (Xobj <0.20)
     {
         X = Xobj;
-        Y = Yobj + d3; //La base de la pince doit être 12.6 cm au dessus de l'objet   peut etre 1cm de plus
+        Y = Yobj + d3+0.077; //La base de la pince doit être 12.6 cm au dessus de l'objet   peut etre 1cm de plus
         angle.etat = 0; //la pince arrive par dessus l'objet
     }
     else
     {
         X = Xobj - d3;
-        Y = Yobj;
+        Y = Yobj+0.077;
         angle.etat = 1; // la pince arrive sur le cote
     }
 
@@ -61,3 +61,48 @@ Angles anglesToDegree(Angles angles){
     return angles;
 }
 
+
+/*
+int main(int argc, char *argv[])
+{
+    float alpha = 0.0;
+    float beta = 0.0;
+    int etat = 0;
+    Angles angles = calculate_angles(0.30,-0.040);
+    alpha = angles.alpha;
+    beta = angles.beta;
+    etat = angles.etat;
+
+    std::cout << "etat : "<<etat << ";  alpha : " << alpha*(180.0/3.141592653589793238463) << ";  beta : "<<beta* (180.0/3.141592653589793238463)<< "\n";
+    
+    long double pi = 3.141592653589793238463;
+    float temp = pi-alpha-0.1849;
+
+
+    long double x = 0.130*cos(alpha) + 0.124 * cos(pi-0.1849-temp-beta);
+    long double y = 0.130*sin(alpha) + 0.124 * sin(pi-0.1849-temp-beta);
+
+    std::cout << "position x de la pince : " << x << "\n";
+    std::cout << "position y de la pince : " << y << "\n";
+    std::cout << "temp : " << temp << "\n";
+
+    float A = alpha*(180.0/3.141592653589793238463) + 10.6;
+    float B = (180-beta*(180.0/3.141592653589793238463)) + 80;
+    
+    float A_code = 1024 + (11.377778*A);
+    float B_code = B * 11.3777778;
+
+    std::cout << "valeur A : " << A << "  valeur A codé : " << A_code << "\n";
+    std::cout << "valeur B : " << B << "  valeur B codé : " << B_code << "\n";
+    
+    float test = -temp*(180.0/3.141592653589793238463) + B - 180;
+
+    float teta = asin(y/x);
+
+    float angle_pince = 3*pi/2 - A*(3.141592653589793238463/180.0) + (180-B) *(3.141592653589793238463/180.0);
+    
+    std::cout << "valeur test angle pince : " <<  angle_pince << "\n";
+    std::cout << "valeur test angle pince par fct: " <<  angles.gamma << "\n";
+
+    return 0;
+}*/
