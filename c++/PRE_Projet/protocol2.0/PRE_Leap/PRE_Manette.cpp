@@ -1,111 +1,102 @@
-
 #include "Sample.cpp"
 //Variables globales
 
 int GOAL_POSE1=2280;
 int GOAL_POSE2=2040;
 int GOAL_POSE3=2850;
+int GOAL_POSE_PINCE=1500;
 
 
 //initialisé dans moteur.cpp
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
 
+struct Positions{
+    int base;
+    int bras1;
+    int bras2; 
+    int bras3;
+    int pince;
+};
+
 
 void lecture(){
   while(1){
-    printf("\n================================\nChoix ID de lecture (1 à 5)\n1 -> BASE\n2 -> BAS du BRAS\n3 -> MILIEU du BRAS\n4 -> HAUT du BRAS\n5 -> PINCE\n(Echap pour revenir en arrière)\n");
+    printf("\n================================\nLecture\n");
     int chr = getch();
-
-    //ID du moteur
-    int lecture_id = 0;
-
-    int32_t dxl_lecture = 0;  
-
-    int dxl_comm_result = COMM_TX_FAIL;              // Communication result
-    uint8_t dxl_error = 0;                           // DYNAMIXEL error
-
 
     if (chr == ESC_ASCII_VALUE)
       break;
 
-    switch( chr )
-    {
-    case '1' :
-        lecture_id=11;
-        printf("--------------Lecture des données de BASE--------------\n");
-        break;
-    case '2' :
-        lecture_id=12;
-        printf("--------------Lecture des données de BAS du BRAS--------------\n");
-        break;
-    case '3' :
-        lecture_id=13;
-        printf("--------------Lecture des données de MILIEU du BRAS--------------\n");
-        break;
-    case '4' :
-        lecture_id=14;
-        printf("--------------Lecture des données de HAUT du BRAS--------------\n");
-        break;
-    case '5' :
-        lecture_id=15;
-        printf("--------------Lecture des données de PINCE--------------\n");
-        break;
-    default:
-        lecture_id=15;
-        printf("--------------Lecture des données de PINCE--------------\n");
-        break;
-    }
+    std::string lecture_str;
 
-    if((lecture_id == 11)||(lecture_id == 12)||(lecture_id == 13)||(lecture_id == 14)||(lecture_id == 15)){
+    lecture_str = "Present position";
+    printf("11: %s: %03d\n", lecture_str.c_str(), readBase());
+    printf("12: %s: %03d\n", lecture_str.c_str(), readBras1());
+    printf("13: %s: %03d\n", lecture_str.c_str(), readBras2());
+    printf("14: %s: %03d\n", lecture_str.c_str(), readBras3());
+    printf("15: %s: %03d\n", lecture_str.c_str(), readPince());
+  }
+}
 
-      std::string lecture_str;
+void enregistrer(){
 
-      lecture_str = "Present position";
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, lecture_id, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("11: %s: %03d\n", lecture_str.c_str(), dxl_lecture);
+  Torque_disable_all();
 
+  printf("Début enregistrement");
+  int chr = getch();
 
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("12: %s: %03d\n", lecture_str.c_str(), dxl_lecture);
+  int taille = 1500;
 
+  int i = 0;
+  Positions tab_pos[taille];
+  
+  while(i < taille){
+    Positions p;
 
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("13: %s: %03d\n", lecture_str.c_str(), dxl_lecture);
+    printf("Enregistrement positon: %d\n", i);
 
+    p.base = readBase();
+    p.bras1 = readBras1();
+    p.bras2 = readBras2();
+    p.bras3 = readBras3();
+    p.pince = readPince();
 
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("14: %s: %03d\n", lecture_str.c_str(), dxl_lecture);
+    tab_pos[i] = p;
 
+    sleep(0.3);
 
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("15: %s: %03d\n", lecture_str.c_str(), dxl_lecture);
-
-      
-      /*
-      lecture_str = "Min position limit";
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, lecture_id, ADDR_MIN_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("%s: %03d\n", lecture_str.c_str(), dxl_lecture);
-
-      lecture_str = "Max position limit";
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, lecture_id, ADDR_MAX_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("%s: %03d\n", lecture_str.c_str(), dxl_lecture);
-
-      lecture_str = "Goal position";
-      dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, lecture_id, ADDR_GOAL_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-      printError(dxl_comm_result, dxl_error);
-      printf("%s: %03d\n", lecture_str.c_str(), dxl_lecture);
-      */
-    }
+    i++;
   }
 
+
+  printf("Enregistrement Termine");
+  Torque_enable_all();
+
+  positionBase(tab_pos[0].base);
+  positionBras1(tab_pos[0].bras1);
+  positionBras2(tab_pos[0].bras2);
+  positionBras3(tab_pos[0].bras3);
+  positionPince(tab_pos[0].pince);
+  chr = getch();
+
+
+  i = 0;
+  
+  while(i < taille){
+
+    printf("aller positon: %d\n", i);
+
+    positionBase(tab_pos[i].base);
+    positionBras1(tab_pos[i].bras1);
+    positionBras2(tab_pos[i].bras2);
+    positionBras3(tab_pos[i].bras3);
+    positionPince(tab_pos[i].pince);
+
+    sleep(0.3);
+
+    i++;
+  }
 }
 
 
@@ -271,120 +262,36 @@ void bouger(){
   }
 }
 
-
-void pose_init(int &dt1, int &dt2, int &dt3){
-  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
-  uint8_t dxl_error = 0;                           // DYNAMIXEL error
-
-  int32_t dxl_lecture = 0;
-  int delta = 50;
-
-  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-  dt1 = (dxl_lecture > GOAL_POSE1) ? -delta : delta;
-  
-  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-  dt2 = (dxl_lecture > GOAL_POSE2) ? -delta : delta;
-  
-  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-  dt3 = (dxl_lecture > GOAL_POSE3) ? -delta : delta;
-
-}
-
-
-void pose_moove(int dt1, int dt2, int dt3){
-
-  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
-  uint8_t dxl_error = 0;                           // DYNAMIXEL error
-
-  int goal = 1;
-  int done1 = 0;
-  int done2 = 0;
-  int done3 = 0;
-
-  int dxl_lecture1 = 0;
-  int dxl_lecture2 = 0;
-  int dxl_lecture3 = 0;
-
-  //Ouverture pince
-  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_GOAL_POSITION, 1740, &dxl_error);
-
-  while(goal){
-    //Récupération de la position des moteurs
-    if((dxl_lecture1 > GOAL_POSE1 + 20)||(dxl_lecture1 < GOAL_POSE1 - 20))
-      dxl_lecture1 = mooveBras1(dt1);
-    else
-      done1 = 1;
-
-    if((dxl_lecture2 > GOAL_POSE2 + 20)||(dxl_lecture2 < GOAL_POSE2 - 20))
-      dxl_lecture2 = mooveBras2(dt2);
-    else
-      done2 = 1;
-
-    if((dxl_lecture3 > GOAL_POSE3 + 20)||(dxl_lecture3 < GOAL_POSE3 - 20))
-      dxl_lecture3 = mooveBras3(dt3);
-    else
-      done3 = 1;
-
-    sleep(0.2);
-    printf("IN:  %d  %d  %d\n", done1, done2, done3);
-    printf("POS:  %d  %d  %d\n", dxl_lecture1, dxl_lecture2, dxl_lecture3);
-
-    if((done1)&&(done2)&&(done3))
-      goal = 0;
-  }
-}
-
 ////////////////////////////////////////////////////
 // Pose le bras au sol avant de disable le Torque //
 ////////////////////////////////////////////////////
-void pose(){
+void position(){
   //Controle les moteurs
   Torque_enable_all();
 
-  int dt1, dt2, dt3;
+  positionBras1(GOAL_POSE1);
+  positionBras2(GOAL_POSE2);
+  positionBras3(GOAL_POSE3);
+  sleep(2);
+  positionPince(GOAL_POSE_PINCE);
 
-  //Récupération du sens de rotation voulue
-  pose_init(dt1, dt2, dt3);
-
-  //Mouvement des moteurs
-  pose_moove(dt1, dt2, dt3);
-
-  //Relache les moteurs
-  //Torque_disable_all();
-
-  printf("INIT POSE TERMINE\n");
-
+  printf("POSITION TERMINE\n");
 }
 
-// Mise a jour des moteurs selon les Dt choisit par la manette
-void moteur_dt(int dt_base, int dt_bras1, int dt_bras2, int dt_bras3, int dt_pince){
-  if(dt_pince != 0)
-    moovePince(dt_pince);
 
-  if(dt_bras1 != 0)
-    mooveBras1(dt_bras1);
-  
-  if(dt_bras2 != 0)
-    mooveBras2(dt_bras2);
-  
-  if(dt_bras3 != 0)
-    mooveBras3(dt_bras3);
-  
-  if(dt_base != 0)
-    mooveBase(dt_base);
-}
 
 void leap(){
   // Create a sample listener and controller
   SampleListener listener;
   Controller controller;
 
-  Torque_enable(DXL_ID_PINCE);
+  Torque_enable_all();
   // Have the sample listener receive events from the controller
   controller.addListener(listener);
 
   //if (argc > 1 && strcmp(argv[1], "--bg") == 0)
-  //  controller.setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
+  //  vef
+  controller.setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
 
   // Keep this process running until Enter is pressed
   std::cout << "Press Enter to quit..." << std::endl;
@@ -393,7 +300,7 @@ void leap(){
   // Remove the sample listener when done
   controller.removeListener(listener);
 
-  Torque_disable(DXL_ID_PINCE);
+  Torque_disable_all();
   //return 0;
 
 }
@@ -432,7 +339,7 @@ void manette(){
           case JS_EVENT_BUTTON:
               printf("Button %u %s\n", event.number, event.value ? "pressed" : "released");
               if ((event.number == 0)&&(event.value)){
-                pose();
+                position();
               }
               else if((event.number == 1)&&(event.value)){
 
@@ -498,18 +405,18 @@ void manette(){
   }
   //Fermeture du joystick
   close(js);
-  pose();
+  position();
 }
 
 
 int main() {
 
-  if(!init())
-    return 0;
+  if(!init());
+  //  return 0;
 
   printf("Lancement du programme.\n");
   while(1) {
-    printf("\n============================================\nb -> bouger\nl -> lire\np -> paramétrer\nm -> manette\n");
+    printf("\n============================================\nb -> bouger\nl -> lire\np -> paramétrer\nm -> manette\nk -> Leap\n");
     int chr = getch();
 
     if (chr == ESC_ASCII_VALUE)
@@ -532,30 +439,37 @@ int main() {
     case 'k' :
     	  leap();
     	  break;
+    case 'e':
+        enregistrer();
+        break;
+        /*
     case '1':
-      GOAL_POSE1=2280;
-      GOAL_POSE2=2040;
-      GOAL_POSE3=2850;
-      pose();
+      GOAL_POSE1=2000;
+      GOAL_POSE2=2000;
+      GOAL_POSE3=2000;
+      position();
       break;
     case '2':
       GOAL_POSE1=1825;
       GOAL_POSE2=2500;
       GOAL_POSE3=2700;
-      pose();
+      GOAL_POSE_PINCE=2300;
+      position();
       break;
     case '3':
-      GOAL_POSE1=2791;
+      GOAL_POSE1=2700;
       GOAL_POSE2=2014;
       GOAL_POSE3=1300;
-      pose();
+      GOAL_POSE_PINCE=2000;
+      position();
       break;
+      */
     default:
         break;
     }
   }
 
-  pose();
+
 
   // Close port
   portHandler->closePort();

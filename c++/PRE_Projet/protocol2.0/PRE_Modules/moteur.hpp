@@ -63,6 +63,8 @@
   #define ADDR_MIN_POSITION           52
   #define ADDR_GOAL_POSITION          116
   #define ADDR_GOAL_SPEED             104
+  #define ADDR_DRIVE_MODE             10
+  #define ADDR_PROFILE_VELOCITY       112
   #define ADDR_PRESENT_POSITION       132
   #define MINIMUM_POSITION_LIMIT      0  
   #define MAXIMUM_POSITION_LIMIT      100  
