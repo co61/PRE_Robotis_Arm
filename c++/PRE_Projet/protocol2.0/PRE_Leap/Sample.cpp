@@ -41,12 +41,14 @@ void SampleListener::onInit(const Controller& controller) {
 
 void SampleListener::onConnect(const Controller& controller) {
   std::cout << "Connected" << std::endl;
+  
   /*
   controller.enableGesture(Gesture::TYPE_CIRCLE);
-  controller.enableGesture(Gesture::TYPE_KEY_TAP);
   controller.enableGesture(Gesture::TYPE_SCREEN_TAP);
-  controller.enableGesture(Gesture::TYPE_SWIPE);
   */
+  controller.enableGesture(Gesture::TYPE_KEY_TAP);
+  controller.enableGesture(Gesture::TYPE_SWIPE);
+  
 }
 
 void SampleListener::onDisconnect(const Controller& controller) {
@@ -75,15 +77,27 @@ void SampleListener::onFrame(const Controller& controller) {
     // Get the first hand
     const Hand hand = *hl;
     std::string handType = hand.isLeft() ? "Left hand" : "Right hand";
+    
     std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
-              << ", palm position: " << hand.palmPosition() << (1300 + int(hand.palmPosition()[0])) << std::endl;
+              << ", palm position: " << hand.palmPosition() << (hand.direction().pitch() * RAD_TO_DEG) << std::endl;
+              
     // Get the hand's normal vector and direction
     const Vector normal = hand.palmNormal();
     const Vector direction = hand.direction();
 
     //oovePince(int(hand.palmPosition()[0]));
-    if(hand.isLeft())
-      positionPince(1300 + int(hand.palmPosition()[0]));
+    if(hand.isRight()){
+      
+      //Suit la position de la main
+      positionBras1(2350 - int(hand.palmPosition()[1]));
+      positionBras2(2200 - int(hand.palmPosition()[1]));
+
+      //Suit l'angle de la main
+      positionBras3(2000 - int(10*(hand.direction().pitch() * RAD_TO_DEG)));
+
+      positionBase(2000 - int(500*hand.direction()[0]));
+      
+      }
     // Calculate the hand's pitch, roll, and yaw angles
     /*
     std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
@@ -137,6 +151,7 @@ void SampleListener::onFrame(const Controller& controller) {
     switch (gesture.type()) {
       case Gesture::TYPE_CIRCLE:
       {
+
         CircleGesture circle = gesture;
         std::string clockwiseness;
 
@@ -169,10 +184,17 @@ void SampleListener::onFrame(const Controller& controller) {
           << ", state: " << stateNames[gesture.state()]
           << ", direction: " << swipe.direction()
           << ", speed: " << swipe.speed() << std::endl;
+
+        if(swipe.direction()[0]>0)
+          positionPince(800);
+        else
+          positionPince(0);
         break;
       }
       case Gesture::TYPE_KEY_TAP:
       {
+
+        positionPince(0);
         KeyTapGesture tap = gesture;
         std::cout << std::string(2, ' ')
           << "Key Tap id: " << gesture.id()
@@ -229,25 +251,4 @@ void SampleListener::onServiceDisconnect(const Controller& controller) {
   std::cout << "Service Disconnected" << std::endl;
 }
 
-/*
-int main(int argc, char** argv) {
-  // Create a sample listener and controller
-  SampleListener listener;
-  Controller controller;
 
-  // Have the sample listener receive events from the controller
-  controller.addListener(listener);
-
-  if (argc > 1 && strcmp(argv[1], "--bg") == 0)
-    controller.setPolicy(Leap::Controller::POLICY_BACKGROUND_FRAMES);
-
-  // Keep this process running until Enter is pressed
-  std::cout << "Press Enter to quit..." << std::endl;
-  std::cin.get();
-
-  // Remove the sample listener when done
-  controller.removeListener(listener);
-
-  return 0;
-}
-*/
