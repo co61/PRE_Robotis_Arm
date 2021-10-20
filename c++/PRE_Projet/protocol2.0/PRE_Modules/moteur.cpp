@@ -150,6 +150,39 @@ int moovePince(int dt){
 }
 
 
+int positionPince(int position){
+
+  printf("in%d", position);
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  int goal = 1;
+  int done = 0;
+  int dt;
+
+  int32_t dxl_lecture = 0;
+  int delta = 20;
+
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt = (dxl_lecture > position) ? -delta : delta;
+
+
+  while(goal){
+    printf("lecture: %d      Position: %d       goal:%d\n", dxl_lecture, position,goal);
+    //Récupération de la position des moteurs
+    if((dxl_lecture > position + 30)||(dxl_lecture < position - 30))
+      dxl_lecture = moovePince(dt);
+    else
+      goal = 0;
+
+    printf("goal:%d\n",goal);
+    sleep(0.2);
+  }
+
+
+}
+
+
 
 //Initialisation des ports
 int init(){
