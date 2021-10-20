@@ -1,6 +1,4 @@
 #include "moteur.hpp"
-
-#include "controle.hpp"
 #include "controle.cpp"
 
 extern dynamixel::PortHandler *portHandler;

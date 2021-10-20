@@ -4,15 +4,6 @@
 extern dynamixel::PortHandler *portHandler;
 extern dynamixel::PacketHandler *packetHandler;
 
-#define PI 3.14159265
-
-double a2=0.128;
-double a1=0.024;
-double d1=sqrt(a1*a1+a2*a2);
-double d2=0.124;
-double d3=0.126;
-double deltaAlpha=atan(a1/a2);
-
 
 struct Position {
     double x;

@@ -1,20 +1,12 @@
-
 #include <iostream>
 #include <cmath>
 
 using namespace std;
 
-#define PI 3.141592653589793238463 
+extern dynamixel::PortHandler *portHandler;
+extern dynamixel::PacketHandler *packetHandler;
 
-double a2=0.128;
-double a1=0.024;
-double d1=sqrt(a1*a1+a2*a2);
-double d2=0.124;
-double d3=0.126;
-double deltaAlpha=atan(a1/a2);
-
-
-struct Angles {
+struct Angles { 
     double alpha;
     double beta;
     double gamma;
@@ -29,6 +21,7 @@ Angles calculate_angles(float Xobj, float Yobj)
     float X=0;
     float Y=0;
 
+    // determine si la pince doit être a la verticale ou a l'horizontal
     if (Xobj <0.20)
     {
         X = Xobj;
@@ -42,64 +35,29 @@ Angles calculate_angles(float Xobj, float Yobj)
         angle.etat = 1; // la pince arrive sur le cote
     }
 
-    double teta  = asin(Y/X);
+    double teta  = atan(Y/X);
     double racine = sqrt(X*X+Y*Y);
     double frac = (d1*d1+X*X+Y*Y-d2*d2)/(2*d1*racine);
 
-    angle.alpha = acos(frac) + teta;
+    //calcul alpha
+    angle.alpha = acos(frac) + teta + deltaAlpha;
+    //calcul beta
+    angle.beta = PI - acos((d1*d1+d2*d2-(X*X+Y*Y))/(2*d1*d2))+ (PI/2-deltaAlpha);
 
-    angle.beta = PI - acos((d1*d1+d2*d2-(X*X+Y*Y))/(2*d1*d2));
-
-    float A = angle.alpha+ deltaAlpha*PI/180;
-    float B = (PI-angle.beta) + (PI/2-deltaAlpha)*PI/180;
-
+    //calcul des anlges "complet"
+    float A = angle.alpha;
+    float B = PI-angle.beta;
+    //calcul gamma
     angle.gamma = 3*PI/2 - A + (PI-B) ;
 
-
+    //return struct angle
     return angle;
 }
 
-
-
-int main(int argc, char *argv[])
-{
-    float alpha = 0.0;
-    float beta = 0.0;
-    int etat = 0;
-    Angles angles = calculate_angles(0.30,-0.040);
-    alpha = angles.alpha;
-    beta = angles.beta;
-    etat = angles.etat;
-
-    std::cout << "etat : "<<etat << ";  alpha : " << alpha*(180.0/3.141592653589793238463) << ";  beta : "<<beta* (180.0/3.141592653589793238463)<< "\n";
-    
-    long double pi = 3.141592653589793238463;
-    float temp = pi-alpha-0.1849;
-
-
-    long double x = 0.130*cos(alpha) + 0.124 * cos(pi-0.1849-temp-beta);
-    long double y = 0.130*sin(alpha) + 0.124 * sin(pi-0.1849-temp-beta);
-
-    std::cout << "position x de la pince : " << x << "\n";
-    std::cout << "position y de la pince : " << y << "\n";
-    std::cout << "temp : " << temp << "\n";
-
-    float A = alpha*(180.0/3.141592653589793238463) + 10.6;
-    float B = (180-beta*(180.0/3.141592653589793238463)) + 80;
-    
-    float A_code = 1024 + (11.377778*A);
-    float B_code = B * 11.3777778;
-
-    std::cout << "valeur A : " << A << "  valeur A codé : " << A_code << "\n";
-    std::cout << "valeur B : " << B << "  valeur B codé : " << B_code << "\n";
-    
-    float test = -temp*(180.0/3.141592653589793238463) + B - 180;
-
-    float teta = asin(y/x);
-
-    float angle_pince = 3*pi/2 - A*(3.141592653589793238463/180.0) + (180-B) *(3.141592653589793238463/180.0);
-    
-    std::cout << "valeur test angle pince : " <<  angle_pince << "\n";
-
-    return 0;
+Angles anglesToDegree(Angles angles){
+    angles.alpha = angles.alpha*180/PI;
+    angles.beta = angles.beta*180/PI;
+    angles.gamma = angles.gamma*180/PI;
+    return angles;
 }
+

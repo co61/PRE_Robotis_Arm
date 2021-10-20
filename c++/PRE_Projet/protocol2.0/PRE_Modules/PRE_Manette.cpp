@@ -1,6 +1,7 @@
 #include "moteur.hpp"
 #include "moteur.cpp"
 #include "getPosition.cpp"
+#include "calculateAngle.cpp"
 //Variables globales
 
 //initialisé dans moteur.cpp
@@ -352,6 +353,13 @@ void readPosition(){
   }
 }
 
+void goTO(){
+  Angles angles=calculate_angles(0.240,0.180);
+  printf("Angles alpha : %g, beta : %g, gamma : %g\n", angles.alpha, angles.beta, angles.gamma);
+  Angles anglesD = anglesToDegree(angles);
+  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesD.alpha, anglesD.beta, anglesD.gamma);
+}
+
 void manette(){
   Torque_enable_all();
   
@@ -484,6 +492,9 @@ int main() {
     	break;
     case 'w' :
       readPosition();
+      break;
+    case 'k' :
+      goTO();
       break;
     default:
         break;
