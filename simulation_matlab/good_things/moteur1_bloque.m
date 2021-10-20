@@ -47,13 +47,14 @@ hold on
 %espace atteignable
 viscircles([0,0],d1+d2+d3)
 
+
 %moteur1 bloqué
 p1_x = d1*cos(teta1_init);
 p1_y = d1*sin(teta1_init);
 viscircles([p1_x,p1_y],d2+d3,'color','blue')
 
 point_atteignable = 0;
-%vérifier que le point est atteignable en bloquant le moteur1
+%vérifier que le point est atteignable en bloquant le moteurx
 if (x_desire - p1_x)^2+(y_desire - p1_y)^2 > (d2+d3)^2
     disp('Impossible de se rendre à ce point car en dehors du cercle accesible par le  robot en bloquant le moteur 1')
     point_atteignable = 1;
@@ -92,5 +93,6 @@ if point_atteignable ~= 1
     
     
     affichage_robot(P1,P2,P3);
+    legend('position souhaitée','axe 1 bloqué','axe 2','axe 3','a')
     
 end

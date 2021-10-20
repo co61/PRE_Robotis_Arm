@@ -27,7 +27,7 @@ teta3_init=deg2rad(0);
 %coordonnées du point souhaité
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-point_desire = [-20 0];
+point_desire = [20 -18];
 x_desire = point_desire(1,1);
 y_desire = point_desire(1,2);
 
@@ -105,7 +105,7 @@ if point_atteignable ~= 1
     % calcul des différents points
     P4 = d1*cos(new_teta(1,1)) + 1i * d1*sin(new_teta(1,1));
     P5 = d1*cos(new_teta(1,1)) + r*cos(new_teta(1,2)) + 1i * (d1*sin(new_teta(1,1)) + r*sin(new_teta(1,2)) );
-    affichage_robot(P4,P5,P5) 
+    %affichage_robot(P4,P5,P5) 
        
     P1 =  d1*cos(new_teta(1,1)) + 1i * d1*sin(new_teta(1,1));
     P2 =  d1*cos(new_teta(1,1)) + d2*cos( teta2 ) + 1i * (d1*sin(new_teta(1,1)) + d2*sin( teta2 ));
