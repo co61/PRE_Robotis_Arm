@@ -348,7 +348,7 @@ void moteur_dt(int dt_base, int dt_bras1, int dt_bras2, int dt_bras3, int dt_pin
 }
 void readPosition(){
   while(1){
-    getPositionPince();
+    getPositionPince3D();
   }
 }
 
