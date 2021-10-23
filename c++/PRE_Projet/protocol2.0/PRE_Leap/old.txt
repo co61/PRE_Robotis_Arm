@@ -1,0 +1,63 @@
+
+void pose_init(int &dt1, int &dt2, int &dt3){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  int32_t dxl_lecture = 0;
+  int delta = 50;
+
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt1 = (dxl_lecture > GOAL_POSE1) ? -delta : delta;
+  
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt2 = (dxl_lecture > GOAL_POSE2) ? -delta : delta;
+  
+  dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
+  dt3 = (dxl_lecture > GOAL_POSE3) ? -delta : delta;
+
+}
+
+
+void pose_moove(int dt1, int dt2, int dt3){
+
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  int goal = 1;
+  int done1 = 0;
+  int done2 = 0;
+  int done3 = 0;
+
+  int dxl_lecture1 = 0;
+  int dxl_lecture2 = 0;
+  int dxl_lecture3 = 0;
+
+  //Ouverture pince
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_GOAL_POSITION, 1740, &dxl_error);
+
+  while(goal){
+    //Récupération de la position des moteurs
+    if((dxl_lecture1 > GOAL_POSE1 + 20)||(dxl_lecture1 < GOAL_POSE1 - 20))
+      dxl_lecture1 = mooveBras1(dt1);
+    else
+      done1 = 1;
+
+    if((dxl_lecture2 > GOAL_POSE2 + 20)||(dxl_lecture2 < GOAL_POSE2 - 20))
+      dxl_lecture2 = mooveBras2(dt2);
+    else
+      done2 = 1;
+
+    if((dxl_lecture3 > GOAL_POSE3 + 20)||(dxl_lecture3 < GOAL_POSE3 - 20))
+      dxl_lecture3 = mooveBras3(dt3);
+    else
+      done3 = 1;
+
+    sleep(0.2);
+    printf("IN:  %d  %d  %d\n", done1, done2, done3);
+    printf("POS:  %d  %d  %d\n", dxl_lecture1, dxl_lecture2, dxl_lecture3);
+
+    if((done1)&&(done2)&&(done3))
+      goal = 0;
+  }
+}
+
