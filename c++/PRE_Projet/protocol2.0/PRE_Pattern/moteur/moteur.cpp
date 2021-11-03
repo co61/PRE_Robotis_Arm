@@ -396,6 +396,7 @@ int init(){
   int dxl_comm_result = COMM_TX_FAIL;              // Communication result
   uint8_t dxl_error = 0;                           // DYNAMIXEL error
 
+  //régalge de la vitesse de mouvement des moteurs
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_DRIVE_MODE, 0, &dxl_error);
   printError(dxl_comm_result, dxl_error);
   dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PROFILE_VELOCITY, 30, &dxl_error);
