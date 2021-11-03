@@ -23,7 +23,7 @@
 #---------------------------------------------------------------------
 
 # *** ENTER THE TARGET NAME HERE ***
-TARGET      = read_write
+TARGET      = PRE_Manette
 
 # important directories used by assorted rules and other variables
 DIR_DXL    = ../../../..
@@ -48,7 +48,7 @@ LIBRARIES  += -lrt
 #---------------------------------------------------------------------
 # Files
 #---------------------------------------------------------------------
-SOURCES = read_write.cpp \
+SOURCES = PRE_Manette.cpp \
     # *** OTHER SOURCES GO HERE ***
 
 OBJECTS  = $(addsuffix .o,$(addprefix $(DIR_OBJS)/,$(basename $(notdir $(SOURCES)))))
