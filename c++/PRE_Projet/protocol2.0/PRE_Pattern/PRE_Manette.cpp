@@ -397,7 +397,7 @@ int main() {
 
   printf("Lancement du programme.\n");
   while(1) {
-    printf("\n============================================\nb -> bouger\nl -> lire\np -> paramétrer\nm -> manette\nk -> Leap\n");
+    printf("\n============================================\nb -> bouger\nl -> lire\np -> paramétrer\nm -> manette\nk -> Leap\ne -> enregistrer\n");
     int chr = getch();
 
     if (chr == ESC_ASCII_VALUE)
