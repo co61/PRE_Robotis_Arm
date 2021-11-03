@@ -296,6 +296,63 @@ void position(){
   printf("POSITION TERMINE\n");
 }
 
+void profileVelocityBase(int val){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_PROFILE_VELOCITY, val, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+}
+
+void profileVelocityBras1(int val){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PROFILE_VELOCITY, val, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+}
+
+
+void profileVelocityBras2(int val){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PROFILE_VELOCITY, val, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+}
+
+
+void profileVelocityBras3(int val){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PROFILE_VELOCITY, val, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+}
+
+
+void profileVelocityPince(int val){
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PROFILE_VELOCITY, val, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+}
+
+
+void profileVelocity(int base, int bras1, int bras2, int bras3, int pince){
+
+  int dxl_comm_result = COMM_TX_FAIL;              // Communication result
+  uint8_t dxl_error = 0;                           // DYNAMIXEL error
+
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_PROFILE_VELOCITY, base, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PROFILE_VELOCITY, bras1, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PROFILE_VELOCITY, bras2, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PROFILE_VELOCITY, bras3, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PROFILE_VELOCITY, pince, &dxl_error);
+  printError(dxl_comm_result, dxl_error);
+
+}
+
 //Initialisation des ports
 int init(){
 
@@ -342,7 +399,7 @@ int init(){
   //régalge de la vitesse de mouvement des moteurs
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_DRIVE_MODE, 0, &dxl_error);
   printError(dxl_comm_result, dxl_error);
-  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PROFILE_VELOCITY, 50, &dxl_error);
+  dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PROFILE_VELOCITY, 30, &dxl_error);
   printError(dxl_comm_result, dxl_error);
 
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_DRIVE_MODE, 0, &dxl_error);

@@ -1,4 +1,5 @@
 #include "Sample.cpp"
+#include <unistd.h>
 //#include "manette/controle.hpp"
 //#include "manette/controle.cpp"
 //#include "controle.cpp"
@@ -9,6 +10,10 @@
 //initialisé dans moteur.cpp
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
+
+#define INIT_POSE1    2280
+#define INIT_POSE2    2040
+#define INIT_POSE3    1850
 
 int GOAL_POSE1=2280;
 int GOAL_POSE2=2040;
@@ -35,6 +40,84 @@ void lecture(){
   }
 }
 
+void thibaut(){
+
+  int taille = 30;
+
+Torque_enable_all();
+
+  Positions tab_pose[taille];
+
+  for (int i =0; i<taille;i++){
+    tab_pose[i].base = 1000;
+    tab_pose[i].bras1 = 2048;
+    tab_pose[i].pince = 1000;
+  }
+
+  tab_pose[0].bras2=2402;tab_pose[0].bras3=1572;
+  tab_pose[1].bras2=2367;tab_pose[1].bras3=1539;
+  tab_pose[2].bras2=2340;tab_pose[2].bras3=1499;
+  tab_pose[3].bras2=2320;tab_pose[3].bras3=1453;
+  tab_pose[4].bras2=2308;tab_pose[4].bras3=1403;
+  tab_pose[5].bras2=2303;tab_pose[5].bras3=1350;
+  tab_pose[6].bras2=2305;tab_pose[6].bras3=1296;
+  tab_pose[7].bras2=2314;tab_pose[7].bras3=1242;
+  tab_pose[8].bras2=2331;tab_pose[8].bras3=1193;
+  tab_pose[9].bras2=2354;tab_pose[9].bras3=1149;
+  tab_pose[10].bras2=2389;tab_pose[10].bras3=1114;
+
+  tab_pose[11].bras2=2427;tab_pose[11].bras3=1091;
+  tab_pose[12].bras2=2479;tab_pose[12].bras3=1084;
+  tab_pose[13].bras2=2540;tab_pose[13].bras3=1096;
+  tab_pose[14].bras2=2609;tab_pose[14].bras3=1129;
+  tab_pose[15].bras2=2681;tab_pose[15].bras3=1181;
+  tab_pose[16].bras2=2749;tab_pose[16].bras3=1247;
+  tab_pose[17].bras2=1295;tab_pose[17].bras3=2782;
+  tab_pose[18].bras2=1399;tab_pose[18].bras3=2820;
+  tab_pose[19].bras2=1429;tab_pose[19].bras3=2838;
+  tab_pose[20].bras2=1483;tab_pose[20].bras3=2836;
+
+  tab_pose[21].bras2=1527;tab_pose[21].bras3=2817;
+  tab_pose[22].bras2=1561;tab_pose[22].bras3=2785;
+  tab_pose[23].bras2=1587;tab_pose[23].bras3=2743;
+  tab_pose[24].bras2=1605;tab_pose[24].bras3=2694;
+  tab_pose[25].bras2=1616;tab_pose[25].bras3=2642;
+  tab_pose[26].bras2=1620;tab_pose[26].bras3=2588;
+  tab_pose[27].bras2=1617;tab_pose[27].bras3=2534;
+  tab_pose[28].bras2=1607;tab_pose[28].bras3=2483;
+  tab_pose[29].bras2=2444;tab_pose[29].bras3=1597;
+
+  positionBase(tab_pose[0].base);
+  positionBras1(tab_pose[0].bras1);
+  positionBras2(tab_pose[0].bras2);
+  positionBras3(tab_pose[0].bras3);
+  positionPince(tab_pose[0].pince);
+
+  printf("Attente \n");
+
+  profileVelocity(110,110,110,110,110);
+  getch();
+
+  printf("Début \n");
+  for (int i=0; i<taille;i++){
+      positionBase(tab_pose[i].base);
+      positionBras1(tab_pose[i].bras1);
+      positionBras2(tab_pose[i].bras2);
+      positionBras3(tab_pose[i].bras3);
+      positionPince(tab_pose[i].pince);
+
+      printf("%d", i);
+
+      usleep(50000);
+
+  }
+
+
+  profileVelocity(30,30,30,30,30);
+
+  printf("Fin \n");
+}
+
 void enregistrer(){
 
 
@@ -47,7 +130,9 @@ void enregistrer(){
   printf("Début enregistrement = appuie sur une touche\n");
   getch();
 
-  int taille = 1500;
+  Torque_enable(DXL_ID_PINCE);
+
+  int taille = 2500;
 
   int i = 0;
   Positions tab_pos[taille];
@@ -65,7 +150,9 @@ void enregistrer(){
 
     tab_pos[i] = p;
 
-    sleep(0.3);
+
+
+    sleep(0.1);
 
     i++;
   }
@@ -92,7 +179,7 @@ void enregistrer(){
   int quit = 1;
 
   while(quit){
-
+    profileVelocity(160,160,160,160,160);
     while(i < taille){
 
       printf("aller positon: %d\n", i);
@@ -103,7 +190,7 @@ void enregistrer(){
       positionBras3(tab_pos[i].bras3);
       positionPince(tab_pos[i].pince);
 
-      sleep(0.3);
+      sleep(0.1);
 
       i++;
 
@@ -113,8 +200,11 @@ void enregistrer(){
     i=0;
 
 
+    profileVelocity(30,30,30,30,30);
+
     printf("== Mise en position initial de chorégraphie = appuie sur une touche ==\n\n");
     getch();
+
 
     positionBase(tab_pos[0].base);
     positionBras1(tab_pos[0].bras1);
@@ -359,11 +449,16 @@ int main() {
     case 'e':
         enregistrer();
         break;
+<<<<<<< HEAD
     case 'i' :
         goTO();
         break;
     case 'u' :
         readPosition();
+=======
+    case 't':
+        thibaut();
+>>>>>>> 98d74cda7dfa8e04934ce59d807753fa5bf4b87d
         break;
     default:
         break;
@@ -372,6 +467,7 @@ int main() {
 
   
   
+position();
 
   int quit = 1;
   while(quit){
@@ -380,7 +476,6 @@ int main() {
     if (chr == ESC_ASCII_VALUE)
       quit = 0;
   }
-
   Torque_disable_all();
 
   
