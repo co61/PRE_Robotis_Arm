@@ -449,16 +449,13 @@ int main() {
     case 'e':
         enregistrer();
         break;
-<<<<<<< HEAD
     case 'i' :
         goTO();
         break;
     case 'u' :
         readPosition();
-=======
     case 't':
         thibaut();
->>>>>>> 98d74cda7dfa8e04934ce59d807753fa5bf4b87d
         break;
     default:
         break;
