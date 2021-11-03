@@ -1,6 +1,5 @@
-#include <iostream>
-#include <cmath>
-
+#include "position.hpp"
+#include <string>
 using namespace std;
 
 extern dynamixel::PortHandler *portHandler;
@@ -11,6 +10,7 @@ struct Angles {
     double beta;
     double gamma;
     bool etat; // 0 si vertical, 1 si horizontal
+    string unit="R";
 };
 
 
@@ -42,11 +42,11 @@ Angles calculate_angles(float Xobj, float Yobj)
     //calcul alpha
     angle.alpha = acos(frac) + teta + deltaAlpha;
     //calcul beta
-    angle.beta = PI - acos((d1*d1+d2*d2-(X*X+Y*Y))/(2*d1*d2))+ (PI/2-deltaAlpha);
+    angle.beta = 3*PI/2 - acos((d1*d1+d2*d2-(X*X+Y*Y))/(2*d1*d2));
 
     //calcul des anlges "complet"
     float A = angle.alpha;
-    float B = PI-angle.beta;
+    float B = angle.beta;
     //calcul gamma
     angle.gamma = 3*PI/2 - A + (PI-B) ;
 
@@ -58,9 +58,26 @@ Angles anglesToDegree(Angles angles){
     angles.alpha = angles.alpha*180/PI;
     angles.beta = angles.beta*180/PI;
     angles.gamma = angles.gamma*180/PI;
+    angles.unit = "D";
     return angles;
 }
 
+Angles anglesToPosition(Angles angles){
+    angles.alpha = convertRadianToPosition(angles.alpha, 1024);
+    angles.beta = 4096-convertRadianToPosition(angles.beta, 0);
+    angles.gamma = 4096-convertRadianToPosition(angles.gamma, 0);
+    angles.unit = "P";
+    return angles;
+}
+
+
+void goToPosition(Angles angleP){
+    if (angleP.unit=="P"){
+        positionBras3(angleP.gamma);
+        positionBras1(angleP.alpha);
+        positionBras2(angleP.beta);
+    }
+}
 
 /*
 int main(int argc, char *argv[])

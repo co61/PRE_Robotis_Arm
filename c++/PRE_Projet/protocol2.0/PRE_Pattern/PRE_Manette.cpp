@@ -2,9 +2,10 @@
 //#include "manette/controle.hpp"
 //#include "manette/controle.cpp"
 //#include "controle.cpp"
+#include "position/getPosition.cpp"
+#include "position/calculateAngle.cpp"
+
 //Variables globales
-
-
 //initialisé dans moteur.cpp
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
@@ -292,9 +293,34 @@ void bouger(){
 }
 
 
+void readPosition(){
+  while(1){
+    getPositionPince3D();
+  }
+}
 
+void goTO(){
+  Angles anglesR=calculate_angles(0.240,0.180);
+  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesR.alpha, anglesR.beta, anglesR.gamma);
+  Angles anglesD = anglesToDegree(anglesR);
+  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesD.alpha, anglesD.beta, anglesD.gamma);
+  Angles anglesP = anglesToPosition(anglesR);
+  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesP.alpha, anglesP.beta, anglesP.gamma);
+  int quit = 1;
+  
+  Torque_enable_all();
+  while(quit){
+    printf("Pret pour lacher les moteurs ? Appuie sur Echap\n");
+    int chr = getch();
+    if (chr == ESC_ASCII_VALUE)
+      quit = 0;
+  }
+  goToPosition(anglesP);
 
+  Position posPince = getPositionPince3D();
+  printf("Position  x : %g, y : %g, z : %g\n", posPince.x, posPince.y, posPince.z);
 
+}
 
 
 
@@ -332,6 +358,12 @@ int main() {
     	  break;
     case 'e':
         enregistrer();
+        break;
+    case 'i' :
+        goTO();
+        break;
+    case 'u' :
+        readPosition();
         break;
     default:
         break;
