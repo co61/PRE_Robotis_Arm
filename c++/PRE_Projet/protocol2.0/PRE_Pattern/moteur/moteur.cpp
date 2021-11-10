@@ -1,4 +1,5 @@
 #include "moteur.hpp"
+#include <unistd.h>
 
 //#include "../manette/controle.hpp"
 #include "../clavier/clavier.cpp"
@@ -65,13 +66,6 @@ void Torque_enable_all(){
   Torque_enable(DXL_ID_PINCE);
 }
 
-void Torque_disable_all(){
-  Torque_disable(DXL_ID_BASE);
-  Torque_disable(DXL_ID_BRAS1);
-  Torque_disable(DXL_ID_BRAS2);
-  Torque_disable(DXL_ID_BRAS3);
-  Torque_disable(DXL_ID_PINCE);  
-}
 
 
 //Erreur de com
@@ -351,6 +345,21 @@ void profileVelocity(int base, int bras1, int bras2, int bras3, int pince){
   dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, DXL_ID_PINCE, ADDR_PROFILE_VELOCITY, pince, &dxl_error);
   printError(dxl_comm_result, dxl_error);
 
+}
+void Torque_disable_all(){
+
+  profileVelocity(30,30,30,30,30);
+  positionBras1(2280);
+  positionBras2(2040);
+  positionBras3(2850);
+
+  usleep(1000000);
+
+  Torque_disable(DXL_ID_BASE);
+  Torque_disable(DXL_ID_BRAS1);
+  Torque_disable(DXL_ID_BRAS2);
+  Torque_disable(DXL_ID_BRAS3);
+  Torque_disable(DXL_ID_PINCE);  
 }
 
 //Initialisation des ports

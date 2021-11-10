@@ -57,6 +57,7 @@ Angles calculate_angles(float Xobj, float Yobj, float Zobj, double dtX=0)
     //calcul gamma
     angle.gamma = 3*PI_t/2 - angle.alpha + (PI_t-angle.beta) ;
 
+
     //rotation du bras
     angle.psi = acos(Xobj/sqrt(Xobj*Xobj+Zobj*Zobj));
     if(Zobj <0 ){
@@ -68,6 +69,7 @@ Angles calculate_angles(float Xobj, float Yobj, float Zobj, double dtX=0)
     //return struct angle
     return angle;
 }
+
 
 Angles anglesToDegree(Angles angleR){
     if(angleR.unit=="R"){

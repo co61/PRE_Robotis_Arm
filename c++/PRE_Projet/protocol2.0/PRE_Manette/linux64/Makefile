@@ -29,21 +29,32 @@ TARGET      = PRE_Manette
 DIR_DXL    = ../../../..
 DIR_OBJS   = .objects
 
+OS := $(shell uname)
+ARCH := $(shell uname -m)
+
+
+
 # compiler options
 CC          = gcc
 CX          = g++
-CCFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g
-CXFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g
-LNKCC       = $(CX)
+CCFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g -fPIC
+CXFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g -fPIC
+LNKCC       = $(CX) 
 LNKFLAGS    = $(CXFLAGS) #-Wl,-rpath,$(DIR_THOR)/lib
 FORMAT      = -m64
 
 #---------------------------------------------------------------------
 # Core components (all of these are likely going to be needed)
 #---------------------------------------------------------------------
+INCLUDES   += -I$(DIR_DXL)/include/
 INCLUDES   += -I$(DIR_DXL)/include/dynamixel_sdk
-LIBRARIES  += ldxl_x64_cpp
+INCLUDES   += -I/usr/include/x86_64-linux-gnu/qt5
+LIBRARIES  += -ldxl_x64_cpp
 LIBRARIES  += -lrt
+LIBRARIES  += -lQt5Gui -lQt5Core -lQt5Widgets
+
+
+
 
 #---------------------------------------------------------------------
 # Files
@@ -58,6 +69,10 @@ OBJECTS  = $(addsuffix .o,$(addprefix $(DIR_OBJS)/,$(basename $(notdir $(SOURCES
 #---------------------------------------------------------------------
 # Compiling Rules
 #---------------------------------------------------------------------
+moc_%.cpp: %.h
+	moc $(DEFINES) $(INCLUDES)
+
+
 $(TARGET): make_directory $(OBJECTS)
 	$(LNKCC) $(LNKFLAGS) $(OBJECTS) -o $(TARGET) $(LIBRARIES)
 
@@ -70,10 +85,11 @@ make_directory:
 	mkdir -p $(DIR_OBJS)/
 
 $(DIR_OBJS)/%.o: ../%.c
-	$(CC) $(CCFLAGS) -c $? -o $@
+	$(CC) $(CCFLAGS) -c $? -o $@ 
+
 
 $(DIR_OBJS)/%.o: ../%.cpp
-	$(CX) $(CXFLAGS) -c $? -o $@
+	$(CX) $(CXFLAGS) -c $? -o $@ 
 
 #---------------------------------------------------------------------
 # End of Makefile
