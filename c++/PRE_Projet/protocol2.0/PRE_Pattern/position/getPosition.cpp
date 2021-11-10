@@ -4,6 +4,14 @@ extern dynamixel::PortHandler *portHandler;
 extern dynamixel::PacketHandler *packetHandler;
 
 
+double pi_t = 3.1415;//92653589793238463; 
+double a2 = 0.128;
+double a1 = 0.024;
+double d1 = sqrt(a1*a1+a2*a2);
+double d2 = 0.124;
+double d3 = 0.126;
+double deltaAlpha = atan(a1/a2);
+
 struct Position {
     double x;
     double y;
@@ -17,7 +25,7 @@ double convertPositionToRadian(int x,int interval[2],double valMax) {
 }
 double convertRadianToPosition(int x,int offset) {
    //define convert function
-   return (int)(x*(4096/(2*PI))+offset);
+   return (int)(x*(4096/(2*pi_t))+offset);
 }
 
 Position getPositionPince3D(){
@@ -30,30 +38,30 @@ Position getPositionPince3D(){
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	alpha=convertPositionToRadian(dxl_lecture, interval, PI);
+	alpha=convertPositionToRadian(dxl_lecture, interval, pi_t);
 
 	int interval2[2]={2048,4096};
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	beta=convertPositionToRadian(dxl_lecture, interval2, -PI);
+	beta=convertPositionToRadian(dxl_lecture, interval2, -pi_t);
 
 	int interval3[2]={1024,3072};
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	gamma=convertPositionToRadian(dxl_lecture, interval3, PI);
+	gamma=convertPositionToRadian(dxl_lecture, interval3, pi_t);
 
 	int interval4[2]={0,2048};
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	psi=convertPositionToRadian(dxl_lecture, interval4, PI);
+	psi=convertPositionToRadian(dxl_lecture, interval4, pi_t);
 
 	Position getPositionPince;
-	getPositionPince.x = (d1*cos(alpha-deltaAlpha)+d2*cos(beta-PI/2+alpha)+d3*cos(gamma-beta-alpha))*cos(psi);
-	getPositionPince.y = 0.077+d1*sin(alpha-deltaAlpha)+d2*sin(beta-PI/2+alpha)+d3*sin(gamma-beta-alpha+PI);     
-	getPositionPince.z = (d1*cos(alpha-deltaAlpha)+d2*cos(beta-PI/2+alpha)+d3*cos(gamma-beta-alpha))*sin(psi);
+	getPositionPince.x = (d1*cos(alpha-deltaAlpha)+d2*cos(beta-pi_t/2+alpha)+d3*cos(gamma-beta-alpha))*cos(psi);
+	getPositionPince.y = 0.077+d1*sin(alpha-deltaAlpha)+d2*sin(beta-pi_t/2+alpha)+d3*sin(gamma-beta-alpha+pi_t);     
+	getPositionPince.z = (d1*cos(alpha-deltaAlpha)+d2*cos(beta-pi_t/2+alpha)+d3*cos(gamma-beta-alpha))*sin(psi);
 	// printf("alpha : %g, beta: %g, gamma: %g\n", alpha,beta,gamma);
 	printf("x1 : %g, y1: %g, z1: %g\n",getPositionPince.x,getPositionPince.y, getPositionPince.z );
 	return getPositionPince;
@@ -69,23 +77,23 @@ Position getPositionPince2D(){
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	alpha=convertPositionToRadian(dxl_lecture, interval, PI);
+	alpha=convertPositionToRadian(dxl_lecture, interval, pi_t);
 
 	int interval2[2]={2048,4096};
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	beta=convertPositionToRadian(dxl_lecture, interval2, -PI);
+	beta=convertPositionToRadian(dxl_lecture, interval2, -pi_t);
 
 	int interval3[2]={1024,3072};
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	gamma=convertPositionToRadian(dxl_lecture, interval3, PI);
+	gamma=convertPositionToRadian(dxl_lecture, interval3, pi_t);
 
 	Position getPositionPince;
-	getPositionPince.x = d1*cos(alpha-deltaAlpha)+d2*cos(beta-PI/2+alpha)+d3*cos(gamma-beta-alpha);
-	getPositionPince.y = 0.077+d1*sin(alpha-deltaAlpha)+d2*sin(beta-PI/2+alpha)+d3*sin(gamma-beta-alpha+PI);
+	getPositionPince.x = d1*cos(alpha-deltaAlpha)+d2*cos(beta-pi_t/2+alpha)+d3*cos(gamma-beta-alpha);
+	getPositionPince.y = 0.077+d1*sin(alpha-deltaAlpha)+d2*sin(beta-pi_t/2+alpha)+d3*sin(gamma-beta-alpha+pi_t);
 	// printf("alpha : %g, beta: %g, gamma: %g\n", alpha,beta,gamma);
 	// printf("x1 : %g, y1: %g, z1: %g\n",getPositionPince.x,getPositionPince.y, getPositionPince.z );
 	return getPositionPince;
@@ -101,17 +109,17 @@ Position getPositionB(){
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	alpha=convertPositionToRadian(dxl_lecture, interval, PI);
+	alpha=convertPositionToRadian(dxl_lecture, interval, pi_t);
 
 	int interval2[2]={2048,4096};
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 	
-	beta=convertPositionToRadian(dxl_lecture, interval2, -PI);
+	beta=convertPositionToRadian(dxl_lecture, interval2, -pi_t);
 
 	Position getPositionB;
-	getPositionB.x = d1*cos(alpha-deltaAlpha)+d2*cos(beta-PI/2+alpha);
-	getPositionB.y = 0.077+d1*sin(alpha-deltaAlpha)+d2*sin(beta-PI/2+alpha);
+	getPositionB.x = d1*cos(alpha-deltaAlpha)+d2*cos(beta-pi_t/2+alpha);
+	getPositionB.y = 0.077+d1*sin(alpha-deltaAlpha)+d2*sin(beta-pi_t/2+alpha);
 	// printf("alpha : %g, beta: %g, gamma: %g\n", alpha,beta,gamma);
 	// printf("x1 : %g, y1: %g, z1: %g\n",getPositionPince.x,getPositionPince.y, getPositionPince.z );
 	return getPositionB;
@@ -127,7 +135,7 @@ Position getPositionA(){
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
 
-	alpha=convertPositionToRadian(dxl_lecture, interval, PI);
+	alpha=convertPositionToRadian(dxl_lecture, interval, pi_t);
 
 	Position getPositionA;
 	getPositionA.x = d1*cos(alpha-deltaAlpha);

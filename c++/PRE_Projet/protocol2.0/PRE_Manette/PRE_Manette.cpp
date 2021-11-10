@@ -46,6 +46,9 @@
 #include <linux/joystick.h>
 
 
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QTextEdit>
+
 #include "dynamixel_sdk.h"  // Uses DYNAMIXEL SDK library
 
 /********* DYNAMIXEL Model definition *********
@@ -828,10 +831,10 @@ int init(){
 
 }
 
-int main() {
+int main(int argv, char **args) {
 
-  if(!init())
-    return 0;
+  if(!init());
+    //return 0;
 
   printf("Lancement du programme.\n");
   while(1) {
@@ -859,6 +862,13 @@ int main() {
         break;
     }
   }
+
+
+  QApplication app(argv, args);
+
+  QTextEdit textEdit;
+  textEdit.show();
+  return app.exec();
 
 
   pose();

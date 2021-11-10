@@ -37,8 +37,8 @@ ARCH := $(shell uname -m)
 # compiler options
 CC          = gcc
 CX          = g++
-CCFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g 
-CXFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g
+CCFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g -fPIC
+CXFLAGS     = -O2 -O3 -DLINUX -D_GNU_SOURCE -Wall $(INCLUDES) $(FORMAT) -g -fPIC
 LNKCC       = $(CX) 
 LNKFLAGS    = $(CXFLAGS) #-Wl,-rpath,$(DIR_THOR)/lib
 FORMAT      = -m64
@@ -48,9 +48,11 @@ FORMAT      = -m64
 #---------------------------------------------------------------------
 INCLUDES   += -I$(DIR_DXL)/include/
 INCLUDES   += -I$(DIR_DXL)/include/dynamixel_sdk
+INCLUDES   += -I/usr/include/x86_64-linux-gnu/qt5
 LIBRARIES  += ../lib/x64/libLeap.so -Wl,-rpath,../lib/x64
 LIBRARIES  += -ldxl_x64_cpp
 LIBRARIES  += -lrt
+LIBRARIES  += -lQt5Gui -lQt5Core -lQt5Widgets
 
 
 
@@ -68,6 +70,10 @@ OBJECTS  = $(addsuffix .o,$(addprefix $(DIR_OBJS)/,$(basename $(notdir $(SOURCES
 #---------------------------------------------------------------------
 # Compiling Rules
 #---------------------------------------------------------------------
+moc_%.cpp: %.h
+	moc $(DEFINES) $(INCLUDES)
+
+
 $(TARGET): make_directory $(OBJECTS)
 	$(LNKCC) $(LNKFLAGS) $(OBJECTS) -o $(TARGET) $(LIBRARIES)
 

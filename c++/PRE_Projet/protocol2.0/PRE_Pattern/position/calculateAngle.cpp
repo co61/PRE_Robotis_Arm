@@ -1,4 +1,5 @@
-#include "position.hpp"
+
+#include "getPosition.cpp"
 #include <string>
 using namespace std;
 
@@ -42,22 +43,22 @@ Angles calculate_angles(float Xobj, float Yobj)
     //calcul alpha
     angle.alpha = acos(frac) + teta + deltaAlpha;
     //calcul beta
-    angle.beta = 3*PI/2 - acos((d1*d1+d2*d2-(X*X+Y*Y))/(2*d1*d2));
+    angle.beta = 3*pi_t/2 - acos((d1*d1+d2*d2-(X*X+Y*Y))/(2*d1*d2));
 
     //calcul des anlges "complet"
     float A = angle.alpha;
     float B = angle.beta;
     //calcul gamma
-    angle.gamma = 3*PI/2 - A + (PI-B) ;
+    angle.gamma = 3*pi_t/2 - A + (pi_t-B) ;
 
     //return struct angle
     return angle;
 }
 
 Angles anglesToDegree(Angles angles){
-    angles.alpha = angles.alpha*180/PI;
-    angles.beta = angles.beta*180/PI;
-    angles.gamma = angles.gamma*180/PI;
+    angles.alpha = angles.alpha*180/pi_t;
+    angles.beta = angles.beta*180/pi_t;
+    angles.gamma = angles.gamma*180/pi_t;
     angles.unit = "D";
     return angles;
 }

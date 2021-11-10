@@ -2,9 +2,13 @@
 //#include "manette/controle.hpp"
 //#include "manette/controle.cpp"
 //#include "controle.cpp"
-#include "position/getPosition.cpp"
 #include "position/calculateAngle.cpp"
 
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QVBoxLayout>
 //Variables globales
 //initialisé dans moteur.cpp
 dynamixel::PortHandler *portHandler;
@@ -394,7 +398,7 @@ void goTO(){
 
 
 
-int main() {
+int main(int argv, char **args) {
 
   if(!init());
   //  return 0;
@@ -440,8 +444,30 @@ int main() {
     }
   }
 
-  
-  
+	QApplication app(argv, args);
+
+	QWidget fenetre;
+
+	QGroupBox *groupe = new QGroupBox("Coucou");
+	groupe->setCheckable(true);
+	groupe->setChecked(false);
+	groupe->setEnabled(true);
+
+	QPushButton *bouton = new QPushButton("Manette");
+	bouton->setEnabled(true);
+
+	QVBoxLayout *vbox = new QVBoxLayout;
+	vbox->addWidget(bouton);
+	groupe->setLayout(vbox);
+
+  app.connect(bouton, SIGNAL(clicked()),SLOT(manette()));
+
+	QVBoxLayout *vboxPrincipal = new QVBoxLayout(&fenetre);
+	vboxPrincipal->addWidget(groupe);
+
+	fenetre.show();
+	return app.exec();
+  /*
 position();
 
   int quit = 1;
@@ -459,4 +485,5 @@ position();
   // Close port
   portHandler->closePort();
   return 0;
+  */
 }
