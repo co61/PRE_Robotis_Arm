@@ -372,12 +372,12 @@ void readPosition(){
 }
 
 void goTO(){
-  Angles anglesR=calculate_angles(0.240,0.180);
-  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesR.alpha, anglesR.beta, anglesR.gamma);
+  Angles anglesR=calculate_angles(0.1,0.15,0.00);
+  printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesR.alpha, anglesR.beta, anglesR.gamma, anglesR.psi);
   Angles anglesD = anglesToDegree(anglesR);
-  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesD.alpha, anglesD.beta, anglesD.gamma);
+  printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesD.alpha, anglesD.beta, anglesD.gamma, anglesD.psi);
   Angles anglesP = anglesToPosition(anglesR);
-  printf("Angles alpha : %g, beta : %g, gamma : %g\n", anglesP.alpha, anglesP.beta, anglesP.gamma);
+  printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesP.alpha, anglesP.beta, anglesP.gamma, anglesP.psi);
   int quit = 1;
   
   Torque_enable_all();
@@ -395,7 +395,83 @@ void goTO(){
 }
 
 
+void calvierLineaire(){
+  printf("\n================================\n(Echap pour revenir en arrière)\n");
+  int chr;
+  Position posPince;
+  Angles anglesR;
+  Angles anglesP;
+  int dt;
+  int dtbase = 40;
 
+  int dxl_lecture = 0;  // Read 4 byte Position data
+
+  Torque_enable_all();
+  while(1){
+    chr = getch();
+    dt = 0;
+    
+    if (chr == ESC_ASCII_VALUE)
+      break;
+    posPince = getPositionPince3D();
+    printf("Position  x : %g, y : %g, z : %g\n", posPince.x, posPince.y, posPince.z);
+    switch(chr)
+    {      
+      //forward
+      case 'z':
+        anglesR=calculate_angles(posPince.x, posPince.y, posPince.z,0.01);
+        anglesP = anglesToPosition(anglesR);
+        goToPosition(anglesP);
+        posPince = getPositionPince3D();
+        break;
+      //back
+      case 's':
+        anglesR=calculate_angles(posPince.x, posPince.y, posPince.z,-0.01);
+        anglesP = anglesToPosition(anglesR);
+        goToPosition(anglesP);
+        posPince = getPositionPince3D();
+        break;
+      //right
+      case 'd':
+        anglesR=calculate_angles(posPince.x, posPince.y, posPince.z);
+        anglesP = anglesToPosition(anglesR, 15);
+        goToPosition(anglesP);
+        posPince = getPositionPince3D();
+        break;
+      //left
+      case 'q':
+        anglesR=calculate_angles(posPince.x, posPince.y, posPince.z );
+        anglesP = anglesToPosition(anglesR, -15);
+        goToPosition(anglesP);
+        posPince = getPositionPince3D();
+        break;
+
+      //up
+      case 't':
+        anglesR=calculate_angles(posPince.x, posPince.y+0.01, posPince.z);
+        anglesP = anglesToPosition(anglesR);
+        goToPosition(anglesP,-15);
+        break;
+        //down
+      case 'g':
+        anglesR=calculate_angles(posPince.x, posPince.y-0.005, posPince.z);
+        anglesP = anglesToPosition(anglesR);
+        goToPosition(anglesP,-5);
+        break;
+      case 'f':
+        moovePince(dtbase);
+        break;
+      case 'h':
+        moovePince(-dtbase);
+        break;
+      
+    }
+
+
+  }
+  
+
+}
 
 
 int main(int argv, char **args) {
@@ -438,6 +514,9 @@ int main(int argv, char **args) {
         readPosition();
     case 't':
         thibaut();
+        break;
+    case 'c':
+        calvierLineaire();
         break;
     default:
         break;
