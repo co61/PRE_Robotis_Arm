@@ -44,7 +44,7 @@ Angles calculate_angles(float Xobj, float Yobj, float Zobj, double dtX=0)
         X=0;
     }
 
-    printf("X : %g   Y :  %g\n", X , Y);
+    // printf("X : %g   Y :  %g\n", X , Y);
     double teta  = atan(Y/X);
     double racine = sqrt(X*X+Y*Y);
     double frac = (d1*d1+X*X+Y*Y-d2*d2)/(2*d1*racine);
@@ -64,7 +64,7 @@ Angles calculate_angles(float Xobj, float Yobj, float Zobj, double dtX=0)
         angle.psi=2*PI_t-angle.psi;
     }
 
-    printf("%g \n",angle.psi);
+    // printf("%g \n",angle.psi);
     angle.unit = "R" ;
     //return struct angle
     return angle;
@@ -98,15 +98,15 @@ Angles anglesToPosition(Angles angleRtoP, double dtpsi = 0){
 }
 
 
-void goToPosition(Angles angleInP, int dt=-10){
+void goToPosition(Angles angleInP, int dt=-8){
     if (angleInP.unit=="P"){
-        printf("bras 3\n");
+        // printf("bras 3\n");
         positionBras3(angleInP.gamma+dt);
-        printf("bras 1\n");
+        // printf("bras 1\n");
         positionBras1(angleInP.alpha+dt);
-        printf("bras 2\n");
+        // printf("bras 2\n");
         positionBras2(angleInP.beta+dt);
-        printf("base, psi : %g\n", angleInP.psi);
+        // printf("base, psi : %g\n", angleInP.psi);
         positionBase(angleInP.psi);
     }
 }
