@@ -12,6 +12,8 @@
 
 //#include "moteur/moteur.hpp"
 //#include "moteur/moteur.cpp"
+
+
 #include "manette/controle.cpp"
 
 using namespace Leap;

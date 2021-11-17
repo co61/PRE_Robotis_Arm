@@ -62,7 +62,7 @@ Position getPositionPince3D(){
 	getPositionPince.z = (d1*cos(alpha-deltaAlpha)+d2*cos(beta-PI_t/2+alpha)+d3*cos(gamma-beta-alpha))*sin(psi);
 
 	// printf("alpha : %g, beta: %g, gamma: %g\n", alpha,beta,gamma);
-	printf("x1 : %g, y1: %g, z1: %g\n",getPositionPince.x,getPositionPince.y, getPositionPince.z );
+	// printf("x1 : %g, y1: %g, z1: %g\n",getPositionPince.x,getPositionPince.y, getPositionPince.z );
 	return getPositionPince;
 }
 

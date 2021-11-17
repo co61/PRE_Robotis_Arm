@@ -1,8 +1,11 @@
+// pou install la lib en root,  sudo make install
+
+// #include "manette/controle.cpp"
+
 #include "Sample.cpp"
 //#include "manette/controle.hpp"
 //#include "manette/controle.cpp"
 //#include "controle.cpp"
-#include "position/calculateAngle.cpp"
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QPushButton>
@@ -422,28 +425,24 @@ void calvierLineaire(){
         anglesR=calculate_angles(posPince.x, posPince.y, posPince.z,0.01);
         anglesP = anglesToPosition(anglesR);
         goToPosition(anglesP);
-        posPince = getPositionPince3D();
         break;
       //back
       case 's':
         anglesR=calculate_angles(posPince.x, posPince.y, posPince.z,-0.01);
         anglesP = anglesToPosition(anglesR);
         goToPosition(anglesP);
-        posPince = getPositionPince3D();
         break;
       //right
       case 'd':
         anglesR=calculate_angles(posPince.x, posPince.y, posPince.z);
         anglesP = anglesToPosition(anglesR, 15);
         goToPosition(anglesP);
-        posPince = getPositionPince3D();
         break;
       //left
       case 'q':
         anglesR=calculate_angles(posPince.x, posPince.y, posPince.z );
         anglesP = anglesToPosition(anglesR, -15);
         goToPosition(anglesP);
-        posPince = getPositionPince3D();
         break;
 
       //up
@@ -515,8 +514,11 @@ int main(int argv, char **args) {
     case 't':
         thibaut();
         break;
-    case 'c':
+    case 'C':
         calvierLineaire();
+        break;
+    case 'M':
+        manetteLineaire();
         break;
     default:
         break;

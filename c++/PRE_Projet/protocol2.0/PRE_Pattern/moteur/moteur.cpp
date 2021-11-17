@@ -353,7 +353,7 @@ void Torque_disable_all(){
   positionBras2(2040);
   positionBras3(2850);
 
-  usleep(1000000);
+  usleep(4000000);
 
   Torque_disable(DXL_ID_BASE);
   Torque_disable(DXL_ID_BRAS1);
