@@ -1,11 +1,11 @@
-//g++ -o video video.cpp $(pkg-config opencv4 --cflags --libs) -I/usr/include/opencv4
+// g++ -o video video.cpp $(pkg-config opencv4 --cflags --libs) -I/usr/include/opencv4
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include <algorithm>
 
-bool orbbec = false;
 int cameraId = 0;
 
 #include <iostream>
@@ -24,52 +24,53 @@ void linesDetect();
 void circlesDetect();
 void circlesDetectProcess(const char*);
 void rectanglesDetect();
-void linesDetect();
-void linesDetectProcess(const char*);
+void rectanglesDetectProcess(const char*);
+void plaqueDetect();
 
-void cannyDetect();
-void thresh_callbackMoment(int, void* );
-void hullDetect();
-void thresh_callbackHull(int, void* );
+//empty fonction for trackbar callback
 void nothing(int, void*){
     
 }
 
-const char* source_window = "Source";
-bool lineArg, circleArg, rectArg, momentArg, hullArg, imageArg = false;
-const char* file;
+//camera focal and object width
+double focal_length = 520;
+double real_item_width = 6.5;
 
-bool firstTimeCircle, firstTimeLine = true;
-bool testtest = true;
+const char* source_window = "Source";
+bool circleArg, rectArg, plaqueArg, imageArg = false;
+const char* file;
+bool circleInitTrackbar=false;
+bool  firstTimeRectangle = true;
+
+double distance_finder(double focal_length, double real_item_width, double item_width_frame);
+
 int main(int argc, char** argv)
 {   
     
     vector<string> args(argv, argv+argc);
-    for (size_t i = 1; i < args.size(); ++i) {
+    if (atoi( args[1].c_str() )){
+        cameraId = atoi( args[1].c_str() );
+    }
+    else {
+        cout <<"argument camera input must be an integer\n";
+        return 0;
+    }
 
-        if (args[i] == "line") {
-            lineArg=true;
-        }
-        else if (args[i] == "circle") {
+    for (size_t i = 2; i < args.size(); ++i) {
+
+        if (args[i] == "circle") {
             circleArg=true;
         }
-        else if (args[i] == "rectangle") {
-            rectArg=true;
+        // else if (args[i] == "rectangle") {
+        //     rectArg=true;
+        // }
+        else if (args[i] == "plaque") {
+            plaqueArg=true;
         }
-        else if (args[i] == "moment") {
-            momentArg=true;
-        }
-        else if (args[i] == "hull") {
-            hullArg=true;
-        }
-
         else{
             imageArg=true;
             file = argv[i];
-        }
-
-
-        
+        }        
     }
 
     
@@ -77,54 +78,35 @@ int main(int argc, char** argv)
     // open the default camera, use something different from 0 otherwise;
     // Check VideoCapture documentation.
     if(!imageArg){
-        if (!orbbec){
-            if(!cap.open(cameraId)){
-                return 0;
-            }
+        if(!cap.open(cameraId)){
+            return 0;
         }
-        /*
-        else {
-            if(!cap.open(CAP_OPENNI2_ASTRA)){
-                return 0;
-                }
-        }*/
     }
 
-
-    for(;;)
+    for(;;) // infinite loop
     {
-          if(!imageArg){
+          if(!imageArg){ //if video
             cap >> frame;
           }
           else{
-            frame  = imread(file);
+            frame  = imread(file);//else read image input
           }
-          if( frame.empty() ) {
+          if( frame.empty() ) { //empty image
               break; // end of video stream
           }
           cvtColor( frame, gray, COLOR_BGR2GRAY );
-          blur( gray, gray, Size(3,3) );
-          //namedWindow( source_window );
-          //imshow( source_window, frame );
-          //imshow("Gray", gray);
-                   
+          blur( gray, gray, Size(3,3) );                 
 
-          if (lineArg){
-              linesDetect();
-          }
+        //process with arg
           if (circleArg){
               circlesDetect();
           }
-          if(rectArg){
-              rectanglesDetect();
+        //   if(rectArg){
+        //       rectanglesDetect();
+        //   }
+          if (plaqueArg){
+              plaqueDetect();
           }
-          if (momentArg){
-              cannyDetect();
-          }
-          if (hullArg){
-              hullDetect();
-          }
-
           if( waitKey(10) == 27 ){
               break; // stop capturing by pressing ESC 
           }
@@ -135,265 +117,289 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void linesDetect(){
-    const char* sourceDisplayLine = "linesDetect";
-    namedWindow( sourceDisplayLine );
-    const int max_thresh = 255;
-        createTrackbar("rho", sourceDisplayLine, 0, max_thresh, nothing );
-        createTrackbar("theta", sourceDisplayLine, 0, max_thresh, nothing );
-        createTrackbar("threshold", sourceDisplayLine, 0, max_thresh, nothing );
-        createTrackbar("minLineLength", sourceDisplayLine, 0, max_thresh, nothing );
-        createTrackbar("maxLineGap", sourceDisplayLine, 0, max_thresh, nothing );
-
-        if (firstTimeLine){
-            setTrackbarPos("rho", sourceDisplayLine, 1);
-            setTrackbarPos("theta", sourceDisplayLine, 180);
-            setTrackbarPos("threshold", sourceDisplayLine, 100);
-            setTrackbarPos("minLineLength", sourceDisplayLine, 50);
-            setTrackbarPos("maxLineGap", sourceDisplayLine, 10);
-            firstTimeLine = false;
-            cout << "firstTimeLine\n"; 
-        }
-        //thresh_callbackMoment( 0, 0 );
-        linesDetectProcess(sourceDisplayLine);
-}
-void linesDetectProcess(const char* sourceDisplayLine){
-    int thetaSrc = getTrackbarPos("theta", sourceDisplayLine);
-    if(getTrackbarPos("theta", sourceDisplayLine)==0){
-        setTrackbarPos("theta", sourceDisplayLine, 1);
-        thetaSrc = 1;
-    }
-
-    int rhoSrc = getTrackbarPos("rho", sourceDisplayLine);
-    if(getTrackbarPos("rho", sourceDisplayLine)==0){
-        setTrackbarPos("rho", sourceDisplayLine, 1);
-        rhoSrc = 1;
-    }
-
-    Mat src = frame.clone();
-    // Edge detection
-    Canny(frame, dst, 50, 200, 3);
-    // Copy edges to the images that will display the results in BGR
-    cvtColor(dst, cdst, COLOR_GRAY2BGR);
-    cdstP = cdst.clone();
-
-
-    // Standard Hough Line Transform
-    /*
-    dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
-    lines: A vector that will store the parameters (r,θ) of the detected lines
-    rho : The resolution of the parameter r in pixels. We use 1 pixel.
-    theta: The resolution of the parameter θ in radians. We use 1 degree (CV_PI/180)
-    threshold: The minimum number of intersections to "*detect*" a line
-    srn and stn: Default parameters to zero. Check OpenCV reference for more info.
-    */
-
-    vector<Vec2f> lines; // will hold the results of the detection
-    HoughLines(dst, lines, rhoSrc, CV_PI/int(thetaSrc), getTrackbarPos("threshold", sourceDisplayLine), 0,0); // runs the actual detection
-    // Draw the lines
-    for( size_t i = 0; i < lines.size(); i++ )
-    {
-        float rho = lines[i][0];
-        float theta = lines[i][1];
-        Point pt1, pt2;
-        double a = cos(theta), b = sin(theta);
-        double x0 = a*rho, y0 = b*rho;
-        pt1.x = cvRound(x0 + 1000*(-b));
-        pt1.y = cvRound(y0 + 1000*(a));
-        pt2.x = cvRound(x0 - 1000*(-b));
-        pt2.y = cvRound(y0 - 1000*(a));
-        line( cdst, pt1, pt2, Scalar(0,0,255), 3, LINE_AA);
-    }
-    // Probabilistic Line Transform
-    /*
-    dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
-    lines: A vector that will store the parameters (xstart,ystart,xend,yend) of the detected lines
-    rho : The resolution of the parameter r in pixels. We use 1 pixel.
-    theta: The resolution of the parameter θ in radians. We use 1 degree (CV_PI/180)
-    threshold: The minimum number of intersections to "*detect*" a line
-    minLineLength: The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
-    maxLineGap: The maximum gap between two points to be considered in the same line.
-    */
-
-    vector<Vec4i> linesP; // will hold the results of the detection
-    HoughLinesP(dst, linesP, rhoSrc, CV_PI/int(thetaSrc), getTrackbarPos("threshold", sourceDisplayLine), getTrackbarPos("minLineLength", sourceDisplayLine), getTrackbarPos("maxLineGap", sourceDisplayLine) ); // runs the actual detection
-    // Draw the lines
-    for( size_t i = 0; i < linesP.size(); i++ )
-    {
-        Vec4i l = linesP[i];
-        line( cdstP, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, LINE_AA);
-    }
-    // Show results
-    imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst);
-    imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP);
+//calcul distance between cam and object
+double distance_finder(double focal_length, double real_item_width, double item_width_frame){
+    double distance = (real_item_width*focal_length)/item_width_frame;
+    return distance;
 }
 
 void circlesDetect(){
+    //create windows
     const char* sourceDisplayCircle = "circleDetect";
     namedWindow( sourceDisplayCircle );
+
+    //create trackbar
     const int max_thresh = 255;
     createTrackbar("minDist", sourceDisplayCircle, 0, max_thresh, nothing );
     createTrackbar("param1", sourceDisplayCircle, 0, max_thresh, nothing );
     createTrackbar("param2", sourceDisplayCircle, 0, max_thresh, nothing );
     createTrackbar("minRadius", sourceDisplayCircle, 0, max_thresh, nothing );
     createTrackbar("maxRadius", sourceDisplayCircle, 0, max_thresh, nothing );
-    // cout << firstTimeCircle;
-    if (testtest){
+
+    //set default param
+    if (!circleInitTrackbar){
         setTrackbarPos("minDist", sourceDisplayCircle, 4);
-        setTrackbarPos("param1", sourceDisplayCircle, 100);
-        setTrackbarPos("param2", sourceDisplayCircle, 30);
-        setTrackbarPos("minRadius", sourceDisplayCircle, 5);
-        setTrackbarPos("maxRadius", sourceDisplayCircle, 80);
-        testtest = false;
+        setTrackbarPos("param1", sourceDisplayCircle, 25);
+        setTrackbarPos("param2", sourceDisplayCircle, 50);
+        setTrackbarPos("minRadius", sourceDisplayCircle, 40);
+        setTrackbarPos("maxRadius", sourceDisplayCircle, 90);
+        circleInitTrackbar = true;
         cout << "firstTimeCircle\n"; 
     }
-    //thresh_callbackMoment( 0, 0 );
+    
     circlesDetectProcess(sourceDisplayCircle);
 }
 
 
-void circlesDetectProcess(const char* sourceDisplayCircle){//void circlesDetectCallback(int, void*){
+void circlesDetectProcess(const char* sourceDisplayCircle){
     int minDist = getTrackbarPos("minDist", sourceDisplayCircle);
+    
+    //avoid crash when 0
     if(getTrackbarPos("minDist", sourceDisplayCircle)==0){
         setTrackbarPos("minDist", sourceDisplayCircle, 1);
         minDist = 1;
     }
-    // cout<<getTrackbarPos("param1", sourceDisplayCircle) <<"\n";
+    
+    //clone src
     Mat src = frame.clone();
     medianBlur(gray, gray, 5);
+
+    cout<<"circle";
+    cout<<getTrackbarPos("param1", sourceDisplayCircle)<<" "<<getTrackbarPos("param2", sourceDisplayCircle)<<" "<<getTrackbarPos("minRadius", sourceDisplayCircle)<<" "<<getTrackbarPos("maxRadius", sourceDisplayCircle)<<"\n"; 
+
+    //circle detect
     vector<Vec3f> circles;
     HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
-                 gray.rows/int(minDist),  // change this value to detect circles with different distances to each other
-                 getTrackbarPos("param1", sourceDisplayCircle),getTrackbarPos("param2", sourceDisplayCircle),getTrackbarPos("minRadius", sourceDisplayCircle), getTrackbarPos("maxRadius", sourceDisplayCircle) // change the last two parameters
-            // (min_radius & max_radius) to detect larger circles
+                 gray.rows/int(minDist),  
+                 getTrackbarPos("param1", sourceDisplayCircle),getTrackbarPos("param2", sourceDisplayCircle),getTrackbarPos("minRadius", sourceDisplayCircle), getTrackbarPos("maxRadius", sourceDisplayCircle) 
     );
+    // HoughCircles(gray, circles, HOUGH_GRADIENT, 1,
+    //              gray.rows/4,  // change this value to detect circles with different distances to each other
+    //              100, 30, 5, 80// change the last two parameters
+    //         // (min_radius & max_radius) to detect larger circles
+    // );
+    //display circles
     for( size_t i = 0; i < circles.size(); i++ )
     {
         Vec3i c = circles[i];
         Point center = Point(c[0], c[1]);
         // circle center
         circle( src, center, 1, Scalar(0,100,100), 3, LINE_AA);
+
         // circle outline
         int radius = c[2];
         circle( src, center, radius, Scalar(255,0,255), 3, LINE_AA);
+
+        //calculate distance
+        double distance = distance_finder(focal_length, real_item_width, radius);
+        cout << "distance " << distance << "\n";
+
     }
+    //display image windows
     imshow("detected circles", src);
 }
 
-void rectanglesDetect(){
+void plaqueDetect(){
 
-    Mat src = frame.clone();
-    Mat edge_img;
+    resize(frame, frame, Size(), 0.75, 0.75);
 
-    vector <vector<Point>> contours;
+    // clone image
+    Mat image = frame.clone();
 
-    // Convert the image into a binary image using Canny filter - threshold could be automatically determined using OTSU method
-    Canny(src, edge_img, 30, 100);
 
-    // Find all contours in the Canny image
-    findContours(edge_img, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
+    // --------------------------------Pre-traitement de l'image 
 
-    // Iterate through the contours and test if contours are square
-    vector<vector<Point>> all_rectangles;
-    vector<Point> single_rectangle;
-    for (size_t i = 0; i < contours.size(); i++)
+    //Prepare the image for findContours
+    cvtColor(image, image, COLOR_BGR2GRAY);
+    threshold(image, image, 125, 255, THRESH_BINARY);
+
+    image = ~image; // inverse image
+    //imshow( "binaire", image );
+
+    //ellipse opening
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(40, 40));
+    //matrix result
+    Mat morph;
+    morphologyEx(image, morph, MORPH_CLOSE, kernel);
+
+    //line opening to delete wires
+    kernel = getStructuringElement(MORPH_RECT, Size(2, 30));
+    morphologyEx(morph, morph, MORPH_OPEN, kernel);
+    
+
+    //imshow( "fermeture", morph );
+
+    //Find the contours. Use the contourOutput Mat so the original image doesn't get overwritten
+    std::vector<std::vector<Point> > contours;
+    Mat contour = morph.clone();
+    findContours( contour, contours, RETR_LIST, CHAIN_APPROX_NONE );
+
+    Mat contourImage(morph.size(), CV_8UC3, Scalar(0,0,0));
+
+    Mat image_contours = frame.clone();
+
+    Scalar colors[3];
+    colors[0] = Scalar(255, 0, 0);
+    colors[1] = Scalar(0, 255, 0);
+    colors[2] = Scalar(0, 0, 255);
+    for (size_t idx = 0; idx < contours.size(); idx++) {
+
+        drawContours(image_contours, contours, idx, colors[idx % 3]);
+    }
+    imshow("Contours", image_contours);
+
+    //finding base
+    float biggest_area = 0.0;
+    int largest_contour_index = 1;
+    Mat drawing = Mat::zeros( morph.size(), CV_8UC3 );
+
+    for( size_t i = 1; i < contours.size(); i++ )
     {
-
-        // 1. Contours should be approximateable as a polygon
-        approxPolyDP(contours[i], single_rectangle, arcLength(contours[i], true) * 0.01, true);
-
-        // 2. Contours should have exactly 4 vertices and be convex
-        if (single_rectangle.size() == 4 && isContourConvex(single_rectangle))
-        {
-            // 3. Determine if the polygon is really a square/rectangle using its properties (parallelity, angles etc.)
-            // Not necessary for the provided image
-
-            // Push the four points into your vector of squares (could be also vector<Rect>)
-            all_rectangles.push_back(single_rectangle);
-        }
+        
+        float a = contourArea( contours[i], false );
+        if (a > biggest_area )
+            {
+             largest_contour_index = i;
+             biggest_area = a;
+            }
     }
 
-    if(all_rectangles.size()>0){
-        cout << "rectangles detected :" << all_rectangles.size() << "\n";
-    }
+    Mat image_contours2 = frame.clone();
 
-    for (size_t num_contour = 0; num_contour < all_rectangles.size(); ++num_contour) {
-        drawContours(src, all_rectangles, num_contour, Scalar::all(-1));
-    }
+    drawContours(image_contours2, contours, largest_contour_index, Scalar(255, 255, 255));
 
-    imshow("detected rectangles", src);
-}
+    imshow("Plus grand contour", image_contours2);
 
-void cannyDetect(){
-    const int max_thresh = 255;
-    createTrackbar( "Canny thresh:", source_window, &thresh, max_thresh, thresh_callbackMoment );
-    thresh_callbackMoment( 0, 0 );
-}
+    Mat plaque =  Mat::zeros( morph.size(), CV_8UC3 );
+    drawContours(plaque, contours, largest_contour_index, Scalar(255, 255, 255));
 
-void hullDetect(){
-    const int max_thresh = 255;
-    createTrackbar( "Hull Canny thresh:", source_window, &thresh, max_thresh, thresh_callbackHull );
-    thresh_callbackHull( 0, 0 );
-}
+    cvtColor(plaque, plaque, COLOR_BGR2GRAY);
 
-void thresh_callbackMoment(int, void* )
-{
-    if (momentArg){
-        Mat canny_output;
-        Canny( gray, canny_output, thresh, thresh*2, 3 );
-        vector<vector<Point> > contours;
-        findContours( canny_output, contours, RETR_TREE, CHAIN_APPROX_SIMPLE );
-        vector<Moments> mu(contours.size() );
-        for( size_t i = 0; i < contours.size(); i++ )
-        {
-            mu[i] = moments( contours[i] );
-        }
-        vector<Point2f> mc( contours.size() );
-        for( size_t i = 0; i < contours.size(); i++ )
-        {
-            //add 1e-5 to avoid division by zero
-            mc[i] = Point2f( static_cast<float>(mu[i].m10 / (mu[i].m00 + 1e-5)),
-                            static_cast<float>(mu[i].m01 / (mu[i].m00 + 1e-5)) );
-            cout << "mc[" << i << "]=" << mc[i] << endl;
-        }
-        Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
-        for( size_t i = 0; i< contours.size(); i++ )
-        {
-            Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
-            drawContours( drawing, contours, (int)i, color, 2 );
-            circle( drawing, mc[i], 4, color, -1 );
-        }
-        imshow( "Contours", drawing );
-        /*
-        cout << "\t Info: Area and Contour Length \n";
-        for( size_t i = 0; i < contours.size(); i++ )
-        {
-            cout << " * Contour[" << i << "] - Area (M_00) = " << fixed << setprecision(2) << mu[i].m00
-                << " - Area OpenCV: " << contourArea(contours[i]) << " - Length: " << arcLength( contours[i], true ) << endl;
-        }*/
-    }
+    
+    imshow("plaque", plaque);
 
-}
+    int blockSize = 20;
+    int apertureSize = 5;
+    double k = 0.01;
+    Mat dst = Mat::zeros( plaque.size(), CV_32FC1 );
+    cornerHarris( plaque, dst, blockSize, apertureSize, k );
+    
 
-void thresh_callbackHull(int, void* )
-{
-    Mat canny_output;
-    Canny( gray, canny_output, thresh, thresh*2 );
-    vector<vector<Point> > contours;
-    findContours( canny_output, contours, RETR_TREE, CHAIN_APPROX_SIMPLE );
-    vector<vector<Point> >hull( contours.size() );
-    for( size_t i = 0; i < contours.size(); i++ )
+    //corners detection
+    Mat dst_norm, dst_norm_scaled;
+    normalize( dst, dst_norm, 0, 255, NORM_MINMAX, CV_32FC1, Mat() );
+    convertScaleAbs( dst_norm, dst_norm_scaled );
+    for( int i = 0; i < dst_norm.rows ; i++ )
     {
-        convexHull( contours[i], hull[i] );
+        for( int j = 0; j < dst_norm.cols; j++ )
+        {
+            if( (int) dst_norm.at<float>(i,j) > thresh )
+            {
+                circle( dst_norm_scaled, Point(j,i), 5,  Scalar(255), 2, 8, 0 );
+            }
+        }
     }
-    Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
-    for( size_t i = 0; i< contours.size(); i++ )
-    {
-        Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
-        drawContours( drawing, contours, (int)i, color );
-        drawContours( drawing, hull, (int)i, color );
-    }
-    imshow( "Hull", drawing );
+    const char* corners_window = "Corners detected";
+
+
+    namedWindow( corners_window );
+    imshow( corners_window, dst_norm_scaled );
+
+
+    // //medianBlur(gray, gray, 5);
+    // vector<Vec3f> circles;
+    // HoughCircles(dst_norm_scaled, circles, HOUGH_GRADIENT, 1,
+    //              dst_norm_scaled.rows/4,10,30,5,20// change the last two parameters
+    //         // (min_radius & max_radius) to detect larger circles
+    // );
+
+    // // cout << "test " << gray.rows/int(minDist) <<"\n";
+    // for( size_t i = 0; i < circles.size(); i++ )
+    // {   
+    //     cout << "cercles"<<"\n";
+    //     Vec3i c = circles[i];
+    //     Point center = Point(c[0], c[1]);
+    //     // circle center
+    //     circle( image_contours, center, 1, Scalar(0,100,100), 3, LINE_AA);
+    //     // circle outline
+    //     int radius = c[2];
+    //     circle( image_contours, center, radius, Scalar(0,255,0), 3, LINE_AA);
+    //     //cout << "radius" << radius << "\n";
+    //     double distance = distance_finder(focal_length, real_item_width, radius);
+    //     cout << "distance " << distance << "\n";
+
+    // }
+
+    imshow("Contours", image_contours);
+
+
 }
 
 
+
+// void rectanglesDetect(){
+//     const char* sourceDisplayRectangle = "rectangleDetect";
+//     namedWindow( sourceDisplayRectangle );
+//     const int max_thresh = 255;
+//     createTrackbar("method", sourceDisplayRectangle, 0, max_thresh, nothing );
+//     createTrackbar("ofset", sourceDisplayRectangle, 0, max_thresh, nothing );
+//     // cout << firstTimeCircle;
+//     if (firstTimeRectangle){
+//         setTrackbarPos("method", sourceDisplayRectangle, 1);
+//         setTrackbarPos("ofset", sourceDisplayRectangle, 1);
+//         cout << "firstTimeRectangle\n";
+//         firstTimeRectangle=false;
+//     }
+//     rectanglesDetectProcess(sourceDisplayRectangle);
+// }
+
+// void rectanglesDetectProcess(const char* sourceDisplayRectangle){
+
+//     Mat src = frame.clone();
+//     Mat edge_img;
+
+//     vector <vector<Point>> contours;
+
+//     // Convert the image into a binary image using Canny filter - threshold could be automatically determined using OTSU method
+//     Canny(src, edge_img, 30, 100);
+
+//     // Find all contours in the Canny image
+//     findContours(edge_img, contours, RETR_LIST, getTrackbarPos("method", sourceDisplayRectangle) );//getTrackbarPos("ofset", sourceDisplayRectangle));// CHAIN_APPROX_SIMPLE);
+
+//     // Iterate through the contours and test if contours are square
+//     vector<vector<Point>> all_rectangles;
+//     vector<Point> single_rectangle;
+//     for (size_t i = 0; i < contours.size(); i++)
+//     {
+
+//         // 1. Contours should be approximateable as a polygon
+//         approxPolyDP(contours[i], single_rectangle, arcLength(contours[i], true) * 0.2, true);
+
+//         // 2. Contours should have exactly 4 vertices and be convex
+//         if (single_rectangle.size() == 4 && isContourConvex(single_rectangle))
+//         {
+//             //Push the four points into your vector of squares (could be also vector<Rect>)
+//             all_rectangles.push_back(single_rectangle);
+//             cout << "found rect"<<"\n";
+//         }
+
+//     }
+
+//     //cout << "rectangle detected : "<< all_rectangles.size()<<"\n";
+//     Scalar color( 0, 255, 0 );
+//     for (size_t num_contour = 0; num_contour < all_rectangles.size(); ++num_contour) {
+//         if(all_rectangles[num_contour][1].x - all_rectangles[num_contour][0].x > 100){
+
+//             cout << "rectangles detected :" << all_rectangles[num_contour][0] << "\n";
+//             cout << "rectangles detected :" << all_rectangles[num_contour][1] << "\n";
+//             cout << "rectangles detected :" << all_rectangles[num_contour][3] << "\n";
+//             cout << "rectangles detected :" << all_rectangles[num_contour][2] << "\n";
+
+
+
+//             drawContours(src, all_rectangles, num_contour, color,FILLED,LINE_AA);
+//         }
+//     }
+
+//     imshow("detected rectangles", src);
+// }
