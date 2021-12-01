@@ -1,4 +1,5 @@
 #include "Sample.cpp"
+#include "widget.h"
 //#include "manette/controle.hpp"
 //#include "manette/controle.cpp"
 //#include "controle.cpp"
@@ -474,7 +475,7 @@ void calvierLineaire(){
 }
 
 
-int main(int argv, char **args) {
+int main(int argc, char **argv) {
 
   if(!init());
   //  return 0;
@@ -523,29 +524,12 @@ int main(int argv, char **args) {
     }
   }
 
-	QApplication app(argv, args);
+    QApplication a(argc, argv);
+    Widget w;
+    w.show();
 
-	QWidget fenetre;
+    return a.exec();
 
-	QGroupBox *groupe = new QGroupBox("Coucou");
-	groupe->setCheckable(true);
-	groupe->setChecked(false);
-	groupe->setEnabled(true);
-
-	QPushButton *bouton = new QPushButton("Manette");
-	bouton->setEnabled(true);
-
-	QVBoxLayout *vbox = new QVBoxLayout;
-	vbox->addWidget(bouton);
-	groupe->setLayout(vbox);
-
-  app.connect(bouton, SIGNAL(clicked()),SLOT(manette()));
-
-	QVBoxLayout *vboxPrincipal = new QVBoxLayout(&fenetre);
-	vboxPrincipal->addWidget(groupe);
-
-	fenetre.show();
-	return app.exec();
   /*
 position();
 
@@ -566,3 +550,15 @@ position();
   return 0;
   */
 }
+
+
+
+int ymain(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    Widget w;
+    w.show();
+
+    return a.exec();
+}
+

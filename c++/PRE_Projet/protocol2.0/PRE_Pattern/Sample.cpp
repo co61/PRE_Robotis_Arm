@@ -14,6 +14,8 @@
 //#include "moteur/moteur.cpp"
 #include "manette/controle.cpp"
 
+
+
 using namespace Leap;
 
 class SampleListener : public Listener {
