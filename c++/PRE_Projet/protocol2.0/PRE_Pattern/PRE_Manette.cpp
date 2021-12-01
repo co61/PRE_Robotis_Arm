@@ -375,7 +375,7 @@ void readPosition(){
 }
 
 void goTO(){
-  Angles anglesR=calculate_angles(0.1,0.15,0.00);
+  Angles anglesR=calculate_angles(0.20,0.20,0.0);
   printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesR.alpha, anglesR.beta, anglesR.gamma, anglesR.psi);
   Angles anglesD = anglesToDegree(anglesR);
   printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesD.alpha, anglesD.beta, anglesD.gamma, anglesD.psi);
@@ -510,7 +510,8 @@ int main(int argv, char **args) {
         goTO();
         break;
     case 'u' :
-        readPosition();
+        readPosition(); // decommenter ligne de printf si utilisation
+        break;
     case 't':
         thibaut();
         break;
