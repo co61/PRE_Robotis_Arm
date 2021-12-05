@@ -14,7 +14,7 @@
 #include "moteur/moteur.hpp"
 //#include "moteur/moteur.cpp"
 //#include "manette/controle.cpp"
-#include "manette/controle.hpp"
+//#include "manette/controle.hpp"
 
 
 

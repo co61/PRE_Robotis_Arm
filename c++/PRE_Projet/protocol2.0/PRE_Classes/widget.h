@@ -3,6 +3,7 @@
 
 //#include "moteur/moteur.hpp"
 #include <QWidget>
+#include "moteur/moteur.hpp"
 
 namespace Ui {
 class Widget;
@@ -17,25 +18,33 @@ public:
     ~Widget();
 
 private slots:
-    void on_buttonBox_accepted();
 
-    void on_buttonBox_rejected();
+    //Lecture position
     void widget_lecture();
 
+    //Utilisation Manette
     void widget_manette();
+    void widget_manetteLineaire();
 
+    //Mouvement du bras (jauges)
     void pince_moove(int pos);
     void bras1_moove(int pos);
     void bras2_moove(int pos);
     void bras3_moove(int pos);
     void base_moove(int pos);
+    void test_moove(int pos, Moteur mot);
 
+    void vitesse();
     void enregistrer_chore();
     void lire_chore();
+    void goTo();
+    void leap();
+    void widget_camera();
 
 
     //void test_moove(int pos, Moteur moteur);
     void disable();
+    void enable();
 
 private:
     Ui::Widget *ui;

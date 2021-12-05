@@ -35,7 +35,6 @@ int printError(int dxl_comm_result, uint8_t dxl_error){
     else if (dxl_error != 0)
     {
       printf("%s\n", packetHandler->getRxPacketError(dxl_error));
-      qDebug() << packetHandler->getRxPacketError(dxl_error) << "\n";
       return 0;
     }
   return 1;
@@ -100,10 +99,19 @@ int Moteur::Torque_enable(){
 
 
 void Moteur::profileVelocity(int val){
+  /*
   this->dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, this->id, ADDR_DRIVE_MODE, 0, &this->dxl_error);
   printError(this->dxl_comm_result, this->dxl_error);
+  */
+  this->dxl_error = 0;
+  this->dxl_comm_result = COMM_SUCCESS;
   this->dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, this->id, ADDR_PROFILE_VELOCITY, val, &this->dxl_error);
   printError(this->dxl_comm_result, this->dxl_error);
+  this->dxl_error = 0;
+  this->dxl_comm_result = COMM_SUCCESS;
+
+
+    printf("Vitesse dedans fonctions: %d DYNAMIXEL Torque.\n", val);
 }
 
 int Moteur::read(){
@@ -171,6 +179,8 @@ int Moteur::position(int position){
 
   this->dxl_comm_result = packetHandler->write4ByteTxRx(portHandler, this->id, ADDR_GOAL_POSITION, position, &this->dxl_error);
   printError(this->dxl_comm_result, this->dxl_error);
+  this->dxl_error = 0;
+  this->dxl_comm_result = COMM_SUCCESS;
   return 1;
 }
 

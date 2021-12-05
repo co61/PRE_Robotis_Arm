@@ -1,3 +1,6 @@
+#ifndef POSITION_HPP
+#define POSITION_HPP
+
 #include <algorithm>
 #include <tuple>
 #include <iostream>
@@ -13,3 +16,4 @@ double d3 = 0.126;
 double d0 = 0.077;
 double deltaAlpha = atan(a1/a2);
 
+#endif

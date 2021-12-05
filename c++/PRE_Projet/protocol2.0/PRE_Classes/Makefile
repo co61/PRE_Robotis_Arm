@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../../../include -I../../../include/dynamixel_sdk -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I. -I../../../include -I../../../include/dynamixel_sdk -isystem /usr/include/qwt -isystem /usr/include/opencv4 -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtWidgets -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = PRE_Pattern1.0.0
 DISTDIR = /home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes/.tmp/PRE_Pattern1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) ../lib/x64/libLeap.so -Wl,-rpath,../lib/x64 -lboost_system -lboost_filesystem -ldxl_x64_cpp -lrt /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so /usr/lib/x86_64-linux-gnu/libGL.so -lpthread   
+LIBS          = $(SUBLIBS) ../lib/x64/libLeap.so -Wl,-rpath,../lib/x64 -lboost_system -lboost_filesystem -ldxl_x64_cpp -lrt -lqwt-qt5 -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_videoio /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so /usr/lib/x86_64-linux-gnu/libGL.so -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -395,9 +395,17 @@ compiler_moc_header_make_all: moc_widget.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_widget.cpp
 moc_widget.cpp: widget.h \
+		moteur/moteur.hpp \
+		../../../include/dynamixel_sdk/dynamixel_sdk.h \
+		../../../include/dynamixel_sdk/group_bulk_read.h \
+		../../../include/dynamixel_sdk/port_handler.h \
+		../../../include/dynamixel_sdk/packet_handler.h \
+		../../../include/dynamixel_sdk/group_bulk_write.h \
+		../../../include/dynamixel_sdk/group_sync_read.h \
+		../../../include/dynamixel_sdk/group_sync_write.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes -I/home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/include -I/home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/include/dynamixel_sdk -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include widget.h -o moc_widget.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes -I/home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/include -I/home/tanguy/Téléchargements/test_qt/PRE_Robotis_Arm/c++/include/dynamixel_sdk -I/usr/include/qwt -I/usr/include/opencv4 -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include widget.h -o moc_widget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -407,7 +415,9 @@ compiler_uic_make_all: ui_widget.h
 compiler_uic_clean:
 	-$(DEL_FILE) ui_widget.h
 ui_widget.h: widget.ui \
-		/usr/lib/qt5/bin/uic
+		/usr/lib/qt5/bin/uic \
+		/usr/include/qwt/qwt_counter.h \
+		/usr/include/qwt/qwt_slider.h
 	/usr/lib/qt5/bin/uic widget.ui -o ui_widget.h
 
 compiler_yacc_decl_make_all:
@@ -432,7 +442,6 @@ PRE_Manette.o: PRE_Manette.cpp Sample.cpp \
 		../../../include/dynamixel_sdk/group_bulk_write.h \
 		../../../include/dynamixel_sdk/group_sync_read.h \
 		../../../include/dynamixel_sdk/group_sync_write.h \
-		manette/controle.hpp \
 		moteur/moteur.cpp \
 		clavier/clavier.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o PRE_Manette.o PRE_Manette.cpp
@@ -450,7 +459,14 @@ widget.o: widget.cpp widget.h \
 		ui_widget.h \
 		manette/controle.cpp \
 		manette/controle.hpp \
-		enregistrement/enregistrer.cpp
+		position/calculateAngle.cpp \
+		position/position.hpp \
+		position/getPosition.cpp \
+		enregistrement/enregistrer.cpp \
+		camera/video.cpp \
+		slot/camera.cpp \
+		slot/controle.cpp \
+		slot/lecture.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o widget.o widget.cpp
 
 moc_widget.o: moc_widget.cpp 

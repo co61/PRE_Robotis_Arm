@@ -4,7 +4,6 @@
 //#include "manette/controle.hpp"
 //#include "manette/controle.cpp"
 //#include "controle.cpp"
-//#include "position/calculateAngle.cpp"
 #include "moteur/moteur.cpp"
 
 #include <QtWidgets/QApplication>

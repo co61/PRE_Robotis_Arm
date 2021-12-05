@@ -16,7 +16,7 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>-10</x>
+     <x>0</x>
      <y>0</y>
      <width>1141</width>
      <height>701</height>
@@ -26,7 +26,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <property name="documentMode">
     <bool>false</bool>
@@ -48,14 +48,21 @@
      <property name="geometry">
       <rect>
        <x>610</x>
-       <y>390</y>
+       <y>380</y>
        <width>361</width>
-       <height>80</height>
+       <height>103</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QComboBox" name="comboBox"/>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar_lire">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_5">
@@ -70,7 +77,7 @@
      <property name="geometry">
       <rect>
        <x>610</x>
-       <y>200</y>
+       <y>190</y>
        <width>361</width>
        <height>159</height>
       </rect>
@@ -84,7 +91,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QProgressBar" name="progressBar_2">
+       <widget class="QProgressBar" name="progressBar_enregistrer">
         <property name="value">
          <number>24</number>
         </property>
@@ -103,9 +110,9 @@
      <property name="geometry">
       <rect>
        <x>210</x>
-       <y>380</y>
+       <y>340</y>
        <width>233</width>
-       <height>141</height>
+       <height>201</height>
       </rect>
      </property>
     </widget>
@@ -121,6 +128,12 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="2" column="1">
        <widget class="QLCDNumber" name="lcdNumber_bras1">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="autoFillBackground">
          <bool>true</bool>
         </property>
@@ -131,6 +144,12 @@
       </item>
       <item row="5" column="1">
        <widget class="QLCDNumber" name="lcdNumber_pince">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="autoFillBackground">
          <bool>true</bool>
         </property>
@@ -152,6 +171,12 @@
       </item>
       <item row="1" column="1">
        <widget class="QLCDNumber" name="lcdNumber_base">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="autoFillBackground">
          <bool>true</bool>
         </property>
@@ -192,6 +217,12 @@
       </item>
       <item row="4" column="1">
        <widget class="QLCDNumber" name="lcdNumber_bras3">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="autoFillBackground">
          <bool>true</bool>
         </property>
@@ -206,6 +237,12 @@
       </item>
       <item row="3" column="1">
        <widget class="QLCDNumber" name="lcdNumber_bras2">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="autoFillBackground">
          <bool>true</bool>
         </property>
@@ -240,12 +277,77 @@
       </rect>
      </property>
     </widget>
+    <widget class="QwtCounter" name="Counter_X">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>40</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>-0.250000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>0.250000000000000</double>
+     </property>
+    </widget>
+    <widget class="QwtCounter" name="Counter_Y">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>40</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>0.250000000000000</double>
+     </property>
+    </widget>
+    <widget class="QwtCounter" name="Counter_Z">
+     <property name="geometry">
+      <rect>
+       <x>620</x>
+       <y>40</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>-0.250000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>0.250000000000000</double>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_goto">
+     <property name="geometry">
+      <rect>
+       <x>940</x>
+       <y>40</y>
+       <width>97</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>GoToXYZ</string>
+     </property>
+    </widget>
     <zorder>graphicsView_2</zorder>
     <zorder>graphicsView</zorder>
     <zorder>verticalLayoutWidget_2</zorder>
     <zorder>verticalLayoutWidget</zorder>
     <zorder>textEdit</zorder>
     <zorder>gridLayoutWidget</zorder>
+    <zorder>Counter_X</zorder>
+    <zorder>Counter_Y</zorder>
+    <zorder>Counter_Z</zorder>
+    <zorder>pushButton_goto</zorder>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
@@ -254,7 +356,7 @@
     <widget class="QDial" name="dial_base">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>160</x>
        <y>450</y>
        <width>121</width>
        <height>111</height>
@@ -273,7 +375,7 @@
     <widget class="QDial" name="dial_bras2">
      <property name="geometry">
       <rect>
-       <x>560</x>
+       <x>510</x>
        <y>170</y>
        <width>121</width>
        <height>111</height>
@@ -292,7 +394,7 @@
     <widget class="QDial" name="dial_pince">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>100</x>
        <y>160</y>
        <width>121</width>
        <height>111</height>
@@ -311,7 +413,7 @@
     <widget class="QDial" name="dial_bras1">
      <property name="geometry">
       <rect>
-       <x>560</x>
+       <x>510</x>
        <y>390</y>
        <width>121</width>
        <height>111</height>
@@ -333,7 +435,7 @@
     <widget class="QDial" name="dial_bras3">
      <property name="geometry">
       <rect>
-       <x>330</x>
+       <x>280</x>
        <y>160</y>
        <width>121</width>
        <height>111</height>
@@ -352,7 +454,7 @@
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>550</x>
        <y>140</y>
        <width>67</width>
        <height>17</height>
@@ -365,7 +467,7 @@
     <widget class="QLabel" name="label_3">
      <property name="geometry">
       <rect>
-       <x>500</x>
+       <x>450</x>
        <y>430</y>
        <width>67</width>
        <height>17</height>
@@ -378,7 +480,7 @@
     <widget class="QLabel" name="label_4">
      <property name="geometry">
       <rect>
-       <x>360</x>
+       <x>310</x>
        <y>130</y>
        <width>67</width>
        <height>17</height>
@@ -391,7 +493,7 @@
     <widget class="QLabel" name="label_5">
      <property name="geometry">
       <rect>
-       <x>250</x>
+       <x>200</x>
        <y>560</y>
        <width>67</width>
        <height>17</height>
@@ -404,7 +506,7 @@
     <widget class="QLabel" name="label_6">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>130</x>
        <y>130</y>
        <width>67</width>
        <height>17</height>
@@ -417,8 +519,8 @@
     <widget class="QPushButton" name="pushButton_2">
      <property name="geometry">
       <rect>
-       <x>820</x>
-       <y>490</y>
+       <x>810</x>
+       <y>400</y>
        <width>221</width>
        <height>61</height>
       </rect>
@@ -430,9 +532,9 @@
     <widget class="QLabel" name="label_7">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>10</y>
-       <width>711</width>
+       <width>701</width>
        <height>651</height>
       </rect>
      </property>
@@ -446,22 +548,22 @@
     <widget class="QPushButton" name="pushButton_3">
      <property name="geometry">
       <rect>
-       <x>810</x>
-       <y>330</y>
-       <width>231</width>
+       <x>780</x>
+       <y>320</y>
+       <width>281</width>
        <height>33</height>
       </rect>
      </property>
      <property name="text">
-      <string>Connecter manette</string>
+      <string>Connecter manette (Non Linéaire)</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_manette">
      <property name="geometry">
       <rect>
-       <x>740</x>
+       <x>750</x>
        <y>50</y>
-       <width>381</width>
+       <width>371</width>
        <height>261</height>
       </rect>
      </property>
@@ -469,6 +571,306 @@
       <string>TextLabel</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="geometry">
+      <rect>
+       <x>780</x>
+       <y>360</y>
+       <width>281</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Connecter manette (Linéaire)</string>
+     </property>
+    </widget>
+    <widget class="QwtSlider" name="Slider_base">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>520</y>
+       <width>71</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="lowerBound">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="upperBound">
+      <double>75.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>30.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QwtSlider" name="Slider_bras1">
+     <property name="geometry">
+      <rect>
+       <x>810</x>
+       <y>520</y>
+       <width>71</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="lowerBound">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="upperBound">
+      <double>75.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>30.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QwtSlider" name="Slider_bras2">
+     <property name="geometry">
+      <rect>
+       <x>890</x>
+       <y>520</y>
+       <width>71</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="lowerBound">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="upperBound">
+      <double>75.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>30.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QwtSlider" name="Slider_bras3">
+     <property name="geometry">
+      <rect>
+       <x>970</x>
+       <y>520</y>
+       <width>71</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="lowerBound">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="upperBound">
+      <double>75.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>30.000000000000000</double>
+     </property>
+     <property name="totalSteps">
+      <UInt>100</UInt>
+     </property>
+    </widget>
+    <widget class="QwtSlider" name="Slider_pince">
+     <property name="geometry">
+      <rect>
+       <x>1040</x>
+       <y>520</y>
+       <width>71</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="lowerBound">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="upperBound">
+      <double>75.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>30.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_14">
+     <property name="geometry">
+      <rect>
+       <x>850</x>
+       <y>640</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Bras 1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_15">
+     <property name="geometry">
+      <rect>
+       <x>930</x>
+       <y>640</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Bras 2</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>1010</x>
+       <y>640</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Bras 3</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_17">
+     <property name="geometry">
+      <rect>
+       <x>1080</x>
+       <y>640</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pince</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_18">
+     <property name="geometry">
+      <rect>
+       <x>780</x>
+       <y>640</y>
+       <width>67</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Base</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_7">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>10</y>
+       <width>221</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Enable le torque</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_19">
+     <property name="geometry">
+      <rect>
+       <x>830</x>
+       <y>490</y>
+       <width>211</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Vitesse des moteurs</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>60</y>
+       <width>211</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Position des moteurs</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>50</y>
+       <width>721</width>
+       <height>611</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_2">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>480</y>
+       <width>391</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+    <widget class="QFrame" name="frame_3">
+     <property name="geometry">
+      <rect>
+       <x>740</x>
+       <y>10</y>
+       <width>391</width>
+       <height>461</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QLabel" name="label_21">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>20</y>
+        <width>281</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Utilisation de la Manette</string>
+      </property>
+     </widget>
+    </widget>
+    <zorder>frame</zorder>
+    <zorder>frame_2</zorder>
+    <zorder>frame_3</zorder>
     <zorder>label_7</zorder>
     <zorder>dial_base</zorder>
     <zorder>dial_bras2</zorder>
@@ -483,24 +885,64 @@
     <zorder>pushButton_2</zorder>
     <zorder>pushButton_3</zorder>
     <zorder>label_manette</zorder>
+    <zorder>pushButton_6</zorder>
+    <zorder>Slider_base</zorder>
+    <zorder>Slider_bras1</zorder>
+    <zorder>Slider_bras2</zorder>
+    <zorder>Slider_bras3</zorder>
+    <zorder>Slider_pince</zorder>
+    <zorder>label_14</zorder>
+    <zorder>label_15</zorder>
+    <zorder>label_16</zorder>
+    <zorder>label_17</zorder>
+    <zorder>label_18</zorder>
+    <zorder>pushButton_7</zorder>
+    <zorder>label_19</zorder>
+    <zorder>label_20</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
      <string>Camera</string>
     </attribute>
+    <widget class="QPushButton" name="pushButton_camera">
+     <property name="geometry">
+      <rect>
+       <x>236</x>
+       <y>250</y>
+       <width>241</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Camera</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_6">
     <attribute name="title">
-     <string>Logs</string>
+     <string>Leap Motion</string>
     </attribute>
-    <widget class="QTextEdit" name="textEdit_2">
+    <widget class="QOpenGLWidget" name="openGLWidget">
      <property name="geometry">
       <rect>
-       <x>63</x>
-       <y>16</y>
-       <width>671</width>
-       <height>621</height>
+       <x>40</x>
+       <y>110</y>
+       <width>511</width>
+       <height>351</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_leap">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>250</y>
+       <width>321</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Leap Motion</string>
      </property>
     </widget>
    </widget>
@@ -829,6 +1271,18 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QwtCounter</class>
+   <extends>QWidget</extends>
+   <header>qwt_counter.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QwtSlider</class>
+   <extends>QWidget</extends>
+   <header>qwt_slider.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

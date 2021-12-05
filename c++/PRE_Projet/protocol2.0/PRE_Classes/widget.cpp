@@ -6,12 +6,17 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QCoreApplication>
+#include <QSignalMapper>
 #include "manette/controle.cpp"
 #include "enregistrement/enregistrer.cpp"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <boost/filesystem.hpp>
+#include "camera/video.cpp"
+#include "slot/camera.cpp"
+#include "slot/controle.cpp"
+#include "slot/lecture.cpp"
 
 using boost::filesystem::directory_iterator;
 
@@ -25,128 +30,45 @@ extern Moteur pince;
 
 extern QApplication a;
 
-int getch_widget() {
-#if defined(__linux__) || defined(__APPLE__)
-  struct termios oldt, newt;
-  int ch;
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  ch = getchar();
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  return ch;
-#elif defined(_WIN32) || defined(_WIN64)
-  return _getch();
-#endif
-}
-
-int kbhit_widget(void) {
-#if defined(__linux__) || defined(__APPLE__)
-  struct termios oldt, newt;
-  int ch;
-  int oldf;
-
-  tcgetattr(STDIN_FILENO, &oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-
-  ch = getchar();
-
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-  if (ch != EOF) {
-    ungetc(ch, stdin);
-    return 1;
-  }
 
 
-  return 0;
-#elif defined(_WIN32) || defined(_WIN64)
-  return _kbhit();
-#endif
-}
 
+void Widget::goTo(){
+  Angles anglesR=calculate_angles(ui->Counter_X->value(),ui->Counter_Y->value(),ui->Counter_Z->value());
+  //printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesR.alpha, anglesR.beta, anglesR.gamma, anglesR.psi);
+  Angles anglesD = anglesToDegree(anglesR);
+  //printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesD.alpha, anglesD.beta, anglesD.gamma, anglesD.psi);
+  Angles anglesP = anglesToPosition(anglesR);
+  //printf("Angles alpha : %g, beta : %g, gamma : %g, psi : %g\n", anglesP.alpha, anglesP.beta, anglesP.gamma, anglesP.psi);
 
-void Widget::widget_lecture(){
+  
+  //Torque_enable_all();
+  goToPosition(anglesP);
 
-    usleep(1000000);
-
-    while(ui->checkBox_lecture->isChecked()){
-    char test[200];
-    sprintf(test, "POSITIONS:\nBase: %d\nBras 1: %d\nBras 2: %d\nBras 3: %d\nPince: %d\n", base.read(), bras1.read(), bras2.read(), bras3.read(),pince.read());
-
-    ui->lcdNumber_base->display(base.read());
-    ui->lcdNumber_bras1->display(bras1.read());
-    ui->lcdNumber_bras2->display(bras2.read());
-    ui->lcdNumber_bras3->display(bras3.read());
-    ui->lcdNumber_pince->display(pince.read());
-
-    ui->textEdit->setText(test);
-    ui->textEdit->update();
-
-    QApplication::processEvents();
-
-    usleep(250000);
-
-    }
-
-
-    ui->textEdit->setText("POSITIONS:\nBase: xxx\nBras 1: xxx\nBras 2: xxx\nBras 3: xxx\nPince: xxx\n");
-    ui->textEdit->update();
-
-}
-
-void Widget::pince_moove(int pos){
-
-    pince.Torque_enable();
-    pince.profileVelocity(30);
-    pince.position(pos);
-
-}
-
-void Widget::bras1_moove(int pos){
-
-    bras1.Torque_enable();
-    bras1.profileVelocity(30);
-    bras1.position(pos);
+  Position posPince = getPositionPince3D();
+  //printf("Position  x : %g, y : %g, z : %g\n", posPince.x, posPince.y, posPince.z);
 
 }
 
 
-void Widget::bras2_moove(int pos){
-
-  bras2.Torque_enable();
-  bras2.profileVelocity(30);
-  bras2.position(pos);
-
+void Widget::leap(){
+  leap();
 }
 
 
-/*
-void Widget::test_moove(int pos, Moteur mot){
-  mot.Torque_enable();
-  mot.profileVelocity(30);
-  mot.position(pos);
-}
-*/
 
-void Widget::bras3_moove(int pos){
 
-  bras3.Torque_enable();
-  bras3.profileVelocity(30);
-  bras3.position(pos);
+void Widget::vitesse(){
+  /*
+  printf("vitesse");
+  QApplication::processEvents();
+  */
+  Moteur::profileVelocity((int)ui->Slider_base->value(),
+                          (int)ui->Slider_bras1->value(),
+                          (int)ui->Slider_bras2->value(),
+                          (int)ui->Slider_bras3->value(),
+                          (int)ui->Slider_pince->value());
 
-}
-
-void Widget::base_moove(int pos){
-  base.Torque_enable();
-  base.profileVelocity(30);
-  base.position(pos);
 }
 
 void  Widget::disable(){
@@ -172,113 +94,22 @@ void  Widget::disable(){
   pince.Torque_disable();  
 }
 
-void Widget::widget_manette(){
+void  Widget::enable(){
+/*
+  base.profileVelocity(30);
+  bras1.profileVelocity(30);
+  bras2.profileVelocity(30);
+  bras3.profileVelocity(30);
+  pince.profileVelocity(30);
+  */
 
-  QPixmap pix_on("manette_on.jpg");
-  int w = ui->label_manette->width();
-  int h = ui->label_manette->height();
-  ui->label_manette->setPixmap(pix_on.scaled(w,h,Qt::KeepAspectRatio));
-
-
-  QApplication::processEvents();
-  
-  manette();
-
-
-  QPixmap pix_off("manette_off.jpg");
-  ui->label_manette->setPixmap(pix_off.scaled(w,h,Qt::KeepAspectRatio));
-}
-void Widget::enregistrer_chore(){
-    FILE* fichier = NULL;
-    char saves[50] = "";
-    sprintf(saves, "enregistrement/saves/%s.txt", ui->plainTextEdit->toPlainText().toUtf8().constData());
-    ui->comboBox->addItem(saves);
-    fichier = fopen(saves, "w");
-
-    Widget::disable();
-
-  int taille = 2500;
-
-  int i = 0;
-  
-    while(i < taille){
-      if((i%50)==0){
-        ui->progressBar_2->setValue((int)(i/25));
-        QApplication::processEvents();
-      }
-
-
-      char chaine[512] = "";
-      sprintf(chaine, "%d\n", base.read());
-      sprintf(chaine, "%s%d\n", chaine,bras1.read());
-      sprintf(chaine, "%s%d\n", chaine,bras2.read());
-      sprintf(chaine, "%s%d\n", chaine,bras3.read());
-      sprintf(chaine, "%s%d\n", chaine,pince.read());
-
-      fputs(chaine, fichier);
-
-      sleep(0.1);
-
-      i++;
-    }
-    
-    fclose(fichier);
+  base.Torque_enable();
+  bras1.Torque_enable();
+  bras2.Torque_enable();
+  bras3.Torque_enable();
+  pince.Torque_enable();  
 }
 
-
-
-void Widget::lire_chore(){
-    FILE* fichier = NULL;
-    
-    fichier = fopen(ui->comboBox->currentText().toUtf8().constData(), "r");
-    printf(ui->comboBox->currentText().toUtf8().constData());
-    //Widget::disable();
-
-    int taille = 2500;
-
-    int i = 0;
-  
-    while(i < taille){
-      
-      char chaine1[512] = "";
-      fgets(chaine1, 512, fichier);
-      printf("base %d\n", std::atoi(chaine1));
-      base.position(std::atoi(chaine1));
-      
-      char chaine2[512] = "";
-      fgets(chaine2, 512, fichier);
-      printf("Bras1 %d\n", std::atoi(chaine2));
-      bras1.position(std::atoi(chaine2));
-      
-
-      char chaine3[512] = "";
-      fgets(chaine3, 512, fichier);
-      printf("Bras2 %d\n", std::atoi(chaine3));
-      bras2.position(std::atoi(chaine3));
-
-
-      char chaine4[512] = "";
-      fgets(chaine4, 512, fichier);
-      printf("Bras3 %d\n", std::atoi(chaine4));
-      bras3.position(std::atoi(chaine4));
-      
-
-      char chaine5[512] = "";
-      fgets(chaine5, 512, fichier);
-
-      printf("Pince %d\n", std::atoi(chaine5));
-      pince.position(std::atoi(chaine5));
-
-      printf("Test recup %d\n", std::stoi("10",nullptr,10));
-
-      sleep(0.1);
-
-      i++;
-    }
-    
-    printf(ui->comboBox->currentText().toUtf8().constData());
-    fclose(fichier);
-}
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -293,10 +124,16 @@ Widget::Widget(QWidget *parent) :
   connect(ui->dial_bras2, SIGNAL(sliderMoved(int)), SLOT(bras2_moove(int)));
   connect(ui->dial_bras3, SIGNAL(sliderMoved(int)), SLOT(bras3_moove(int)));
   connect(ui->dial_base, SIGNAL(sliderMoved(int)), SLOT(base_moove(int)));
+  connect(ui->pushButton_goto, SIGNAL(clicked()), SLOT(goTo()));
+  connect(ui->pushButton_leap, SIGNAL(clicked()), SLOT(leap()));
+
+  connect(ui->pushButton_camera, SIGNAL(clicked()), SLOT(widget_camera()));
 
 
+  connect(ui->Slider_bras2, SIGNAL(valueChanged(double)), SLOT(vitesse()));
   
-  ui->progressBar_2->setValue(0);
+  ui->progressBar_enregistrer->setValue(0);
+  ui->progressBar_lire->setValue(0);
   std::string path = "enregistrement/saves/";
     
 
@@ -316,9 +153,10 @@ Widget::Widget(QWidget *parent) :
   //connect(ui->pushButton_manette, SIGNAL(clicked()), SLOT(bras1_moove(int)));
 
   connect(ui->pushButton_2, SIGNAL(clicked()), SLOT(disable()));
-  //connect(ui->horizontalSlider, SIGNAL(sliderMoved(int)), ui->spinBox, SLOT(setValue(int)));
+  connect(ui->pushButton_7, SIGNAL(clicked()), SLOT(enable()));
   connect(ui->checkBox_lecture, SIGNAL(stateChanged(int)), SLOT(widget_lecture()));
   connect(ui->pushButton_3, SIGNAL(clicked()), SLOT(widget_manette()));
+  connect(ui->pushButton_6, SIGNAL(clicked()), SLOT(widget_manetteLineaire()));
 
 
   connect(ui->pushButton_4, SIGNAL(clicked()), SLOT(enregistrer_chore()));
@@ -332,42 +170,3 @@ Widget::~Widget()
 
 
 
-void Widget::on_buttonBox_accepted()
-{
-
-static int state =0;
-QString phrase = "au clair de la lune mon ami Pierrot";
-QStringList mots = phrase.split(" ");
-
-
-ui->checkBox_lecture->setChecked(!ui->checkBox_lecture->isChecked());
-ui->checkBox_2->setChecked(state==1);
-ui->radioButton->setChecked(state==2);
-ui->label->setText("hello world!");
-ui->progressBar->setValue(state*10);
-ui->doubleSpinBox->setValue(M_PI);
-ui->calendarWidget->showToday();
-ui->timeEdit->setDateTime(QDateTime().currentDateTime());
-ui->lcdNumber->setHexMode();
-ui->lcdNumber->display(rand()%16);
-QRect r = ui->buttonBox->geometry();
-r.moveCenter(r.center()+QPoint(0, -1));
-ui->buttonBox->setGeometry(r);
-
-ui->tabWidget->setCurrentIndex(state%2);
-ui->toolBox->setCurrentIndex(!ui->tabWidget->currentIndex());
-ui->lineEdit->setText(QString().setNum(state));
-QString br;
-br.sprintf("click sur le bouton, position: %d, %d", r.x(), r.y());
-ui->textEdit->append(br);
-this->setCursor(state==5 ? Qt::WaitCursor : Qt::ArrowCursor);
-
-ui->groupBox->setTitle(mots[state%mots.size()]);
-state = (state+1)%10;
-}
-
-void Widget::on_buttonBox_rejected()
-{
-    //int response = QMessageBox::question(this, "Quitter", "Etes vous sur ?", QMessageBox::Yes | QMessageBox::No);
-    //if (response== QMessageBox::Yes) close();
-}

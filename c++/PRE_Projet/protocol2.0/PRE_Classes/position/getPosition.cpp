@@ -3,6 +3,12 @@ extern dynamixel::PortHandler *portHandler;
 extern dynamixel::PacketHandler *packetHandler;
 
 
+extern Moteur base;
+extern Moteur bras1;
+extern Moteur bras2;
+extern Moteur bras3;
+extern Moteur pince;
+
 
 struct Position {
     double x;
@@ -27,32 +33,31 @@ Position getPositionPince3D(){
 	uint8_t dxl_error = 0;
 
 	int interval[2]={3072,1024};
-	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-	printError(dxl_comm_result, dxl_error);
+
+	dxl_lecture = bras1.read();
 
 
 	alpha=convertPositionToRadian(dxl_lecture, interval, PI_t);
 
 
 	int interval2[2]={2048,4096};
-	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-	printError(dxl_comm_result, dxl_error);
 
+	dxl_lecture = bras2.read();
 
 	beta=convertPositionToRadian(dxl_lecture, interval2, -PI_t);
 
 
 	int interval3[2]={1024,3072};
-	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-	printError(dxl_comm_result, dxl_error);
+
+	dxl_lecture = bras3.read();
 
 
 	gamma=convertPositionToRadian(dxl_lecture, interval3, PI_t);
 
 
 	int interval4[2]={0,2048};
-	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BASE, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
-	printError(dxl_comm_result, dxl_error);
+
+	dxl_lecture = base.read();
 
 	psi=convertPositionToRadian(dxl_lecture, interval4, PI_t);
 
@@ -73,23 +78,34 @@ Position getPositionPince2D(){
 	uint8_t dxl_error = 0;
 
 	int interval[2]={3072,1024};
+	/*
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
+	*/
 
+	dxl_lecture = bras1.read();
 
 	alpha=convertPositionToRadian(dxl_lecture, interval, PI_t);
 
 
 	int interval2[2]={2048,4096};
+	/*
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
+	*/
+
+	dxl_lecture = bras2.read();
 
 	beta=convertPositionToRadian(dxl_lecture, interval2, -PI_t);
 
 
 	int interval3[2]={1024,3072};
+	/*
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS3, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
+	*/
+
+	dxl_lecture = bras3.read();
 
 
 	gamma=convertPositionToRadian(dxl_lecture, interval3, PI_t);
@@ -110,16 +126,23 @@ Position getPositionB(){
 	uint8_t dxl_error = 0;
 
 	int interval[2]={3072,1024};
+	/*
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
+	*/
+
+	dxl_lecture = bras1.read();
 
 	alpha=convertPositionToRadian(dxl_lecture, interval, PI_t);
 
 
 	int interval2[2]={2048,4096};
+	/*
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS2, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
-	
+	*/
+
+	dxl_lecture = bras2.read();
 
 	beta=convertPositionToRadian(dxl_lecture, interval2, -PI_t);
 
@@ -139,8 +162,13 @@ Position getPositionA(){
 	uint8_t dxl_error = 0;
 
 	int interval[2]={3072,1024};
+
+	/*
 	dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, DXL_ID_BRAS1, ADDR_PRESENT_POSITION, (uint32_t*)&dxl_lecture, &dxl_error);
 	printError(dxl_comm_result, dxl_error);
+	*/
+
+	dxl_lecture = bras1.read();
 
 
 	alpha=convertPositionToRadian(dxl_lecture, interval, PI_t);

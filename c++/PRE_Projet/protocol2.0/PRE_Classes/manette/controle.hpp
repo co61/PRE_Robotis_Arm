@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "../moteur/moteur.hpp"
+#include "../position/calculateAngle.cpp"
 
 struct axis_state {
     short x, y;
