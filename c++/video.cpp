@@ -5,6 +5,11 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <algorithm>
+#include <chrono>
+#include <thread>
+#include <numeric>
+#include <functional>
+
 
 int cameraId = 0;
 
@@ -41,6 +46,12 @@ bool circleArg, rectArg, plaqueArg, imageArg = false;
 const char* file;
 bool circleInitTrackbar=false;
 bool  firstTimeRectangle = true;
+
+Point point1;
+Point point3;
+Point point4;
+Point point2;
+bool exitPlaque = false;
 
 double distance_finder(double focal_length, double real_item_width, double item_width_frame);
 
@@ -83,6 +94,18 @@ int main(int argc, char** argv)
         }
     }
 
+    //this_thread::sleep_for(std::chrono::milliseconds(1000));
+    // if (plaqueArg){
+    //         while (exitPlaque == false){
+    //             cap >> frame;
+    //             plaqueDetect();
+    //         }
+              
+    // }
+
+    //this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+
     for(;;) // infinite loop
     {
           if(!imageArg){ //if video
@@ -98,15 +121,29 @@ int main(int argc, char** argv)
           blur( gray, gray, Size(3,3) );                 
 
         //process with arg
-          if (circleArg){
+          if (circleArg & exitPlaque == true){
               circlesDetect();
           }
+
+        
+        if (exitPlaque == false){
+                plaqueDetect();
+        }
+
+        if (exitPlaque == true){
+            circle(frame,point1,5,Scalar(0,0,255),-1);
+            circle(frame,point2,5,Scalar(0,0,255),-1);
+            circle(frame,point3,5,Scalar(0,0,255),-1);
+            circle(frame,point4,5,Scalar(0,0,255),-1);
+            imshow("detected plaque", frame);
+        }
         //   if(rectArg){
         //       rectanglesDetect();
         //   }
-          if (plaqueArg){
-              plaqueDetect();
-          }
+
+              
+
+          
           if( waitKey(10) == 27 ){
               break; // stop capturing by pressing ESC 
           }
@@ -164,8 +201,42 @@ void circlesDetectProcess(const char* sourceDisplayCircle){
     Mat src = frame.clone();
     medianBlur(gray, gray, 5);
 
-    cout<<"circle";
-    cout<<getTrackbarPos("param1", sourceDisplayCircle)<<" "<<getTrackbarPos("param2", sourceDisplayCircle)<<" "<<getTrackbarPos("minRadius", sourceDisplayCircle)<<" "<<getTrackbarPos("maxRadius", sourceDisplayCircle)<<"\n"; 
+    //cout<<"circle";
+    //cout<<getTrackbarPos("param1", sourceDisplayCircle)<<" "<<getTrackbarPos("param2", sourceDisplayCircle)<<" "<<getTrackbarPos("minRadius", sourceDisplayCircle)<<" "<<getTrackbarPos("maxRadius", sourceDisplayCircle)<<"\n"; 
+
+
+    Point2f inputQuad[4];
+    Point2f outputQuad[4];
+    inputQuad[0] = Point2f(point1.x,point1.y);
+    inputQuad[1] = Point2f(point2.x,point2.y);
+    inputQuad[2] = Point2f(point3.x,point3.y);
+    inputQuad[3] = Point2f(point4.x,point4.y);  
+    
+    // The 4 points where the mapping is to be done , from top-left in clockwise order
+    outputQuad[0] = Point2f( 0,0 );
+    outputQuad[1] = Point2f( src.cols,0);
+    outputQuad[2] = Point2f( 0,src.rows);
+    outputQuad[3] = Point2f(  src.cols,src.rows);
+
+
+
+    vector<Point>pts1 = {point1,point3,point4,point2};
+    vector<Point>pts2 = {Point(0,0),Point(720,0),Point(0,720),Point(720,720)};
+    
+    for (int val =0; val < pts1.size(); val++){
+        circle(src,pts1[val],5,Scalar(0,0,255),-1);
+        
+    }
+    Mat M;
+    M = getPerspectiveTransform(inputQuad,outputQuad);
+
+    Mat dst;
+    warpPerspective(gray,dst,M,dst.size());//Point(1000,1000));
+    int min_rad = 20;
+    int max_rad = 100;
+    //imshow('titre',src)
+
+
 
     //circle detect
     vector<Vec3f> circles;
@@ -192,21 +263,98 @@ void circlesDetectProcess(const char* sourceDisplayCircle){
 
         //calculate distance
         double distance = distance_finder(focal_length, real_item_width, radius);
-        cout << "distance " << distance << "\n";
+        //cout << "distance " << distance << "\n";
+        Mat test = Mat::zeros( 3,3,M.type());
+        test.at<double>(0,0) =double(c[0]);
+        test.at<double>(1,0) =double(c[1]);
+        test.at<double>(2,0) =1.0;
+        Mat result = M*test;
+        result.at<double>(0,0) /= result.at<double>(2,0); // scale
+        result.at<double>(1,0) /= result.at<double>(2,0); // scale
+        center.x = result.at<double>(0,0);
+        center.y = result.at<double>(1,0);
+        circle(dst,center,5,(0,255,0),-1);
+
+        /*value to return
+        center.x = result.at<double>(0,0);
+        center.y = result.at<double>(1,0);*/
 
     }
+
     //display image windows
     imshow("detected circles", src);
+    imshow("detected in plan", dst);
+
+    
+
+
 }
 
 void plaqueDetect(){
 
-    resize(frame, frame, Size(), 0.75, 0.75);
+    //resize(frame, frame, Size(), 0.75, 0.75);
 
     // clone image
     Mat image = frame.clone();
+    Mat blur;
+    pyrMeanShiftFiltering(image,blur,11,21);
+    cvtColor(image, gray, COLOR_BGR2GRAY);
+    Mat thresh;
+    threshold(gray,thresh,0,255,THRESH_BINARY_INV + THRESH_OTSU);
+    Mat sortie;
+    Mat kernel = getStructuringElement(MORPH_RECT, Size(12, 12));
+    morphologyEx(thresh, sortie, MORPH_OPEN, kernel);
+    kernel = getStructuringElement(MORPH_RECT, Size(20, 20));
+    morphologyEx(sortie, sortie, MORPH_CLOSE, kernel);
 
+    Mat edged;    
+    Canny(sortie, edged, 170, 255);
 
+    std::vector<std::vector<Point> > cnts;
+    findContours( edged, cnts, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE );
+
+    std::vector<Point>  contours;
+    if (cnts.size() == 2) {
+        contours = cnts[0] ;
+    } else {
+        cnts[1];
+    }
+    std::vector<Point> c;
+    for (int i = 0; i < cnts.size() ; i++){
+        //peri = arcLength(c, True);
+        vector<Point> approx;
+        approxPolyDP(cnts[i],approx, 0.015 * arcLength(cnts[i], true), true);
+        if (approx.size() == 4){
+            cout <<"rectangle detected\n";
+            point1 = approx[0];
+            point3 = approx[1];
+            point4 = approx[2];
+            point2 = approx[3];
+
+            cout << "point1 " << point1.x <<" "<<point1.y<<"\n";
+            cout << "point2 " << point2.x <<" "<<point2.y<<"\n";
+            cout << "point3 " << point3.x <<" "<<point3.y<<"\n";
+            cout << "point4 " << point4.x <<" "<<point4.y<<"\n";
+            //x,y,w,h = cv2.boundingRect(approx)
+            //rectangle(image,(x,y),(x+w,y+h),(36,255,12),2)
+            
+            //circle(image,point1,5,Scalar(0,0,255),-1);
+            //circle(image,point2,5,Scalar(0,0,255),-1);
+            //circle(image,point3,5,Scalar(0,0,255),-1);
+            //circle(image,point4,5,Scalar(0,0,255),-1);
+            
+            //imshow("fermeture",sortie);
+            //imshow("thresh", thresh);
+            
+            //imshow("plaque", image);
+            //imshow("contours",edged);
+            exitPlaque = true;
+        }
+
+    }
+    
+}
+    /*
     // --------------------------------Pre-traitement de l'image 
 
     //Prepare the image for findContours
@@ -330,10 +478,10 @@ void plaqueDetect(){
 
     // }
 
-    imshow("Contours", image_contours);
+    imshow("Contours", image_contours);*/
 
 
-}
+//}
 
 
 
