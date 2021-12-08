@@ -64,7 +64,7 @@
 					<div class="row align-items-center" style="margin-top:30px;">
 						<div class="col">
 					<h1>But du projet</h1>
-					<p> Le but du projet est d'instrumenter un pendule simple, nous souhaitons donc acquérir la position du pendule ainsi que la vitesse et l'accélération de celui-ci. Nous devrons acquérir ces différentes données sur un PC à l'aide d'un IHM. Aucun controle depuis l'IHM n'est requis, la liaison entre la carte lié au pendule et l'ordinateur sera donc simplex (Utilisation de la laision Série). En parrallèle de ce travail, nous étudierons la partie mécanique du pendule pour en obtenir les équations dynmique et finalement une courbe théorique. Nous pourrons alors comparer expérimentation et théorique.</p>
+					<p> L'objectif de projet est de prendre en main un bras robotique construit et vendu par Robotis. Ce bras devra être métrisé grâce à différentes technologies tel que les calvier de l'ordinateur, une manette de jeu type logitech, un leap motion, et une caméra. Le but est de contrôler le mouvement du bras qui possède une rotation, trois articulation et peut fermer ou ouvrir la pince.</p>
 </div>
 <div class="col" >
 <img src="../img/pres.png" style="width:400px;    margin-left: 15%;">
@@ -72,14 +72,15 @@
 </div>
 
 					<h1>Déroulement du projet</h1>
-					<p style="padding-bottom: 50px"> Nous avons à disposition 3 capteurs: le Potentiomètre pour obtenir la position angulaire du pendule, l'Encodeur pour acquérir la vitesse et l'Accéléromètre pour avoir l'accélération. Nous allons gérer ces capteurs à l'aide d'un microcontrolleur STM32F411RE, cette carte est rélié au PC par une laision série (Qui sert aussi d'alimentation dans notre cas) et enverra donc en continu les informations sur celle-ci avec un délai de 50ms entre chaque envoie. Les informations sont alors récupérées sur le PC à l'aide de Matlab sur lequel on trace les courbes des valeurs relevées en "temps réel". L'étude théorique du pendule faite sur papier est ensuite retranscrite sur SimuLink pour obtenir la courbe theorique des oscillations d'un pendule simple. On affiche ensuite cette courbe theorique sur la courbe expérimentale de la position angulaire.</p>
+					<p style="padding-bottom: 50px"> Nous avons commencé prendre en main la librairie du robot et avons décidé de contrôler le robot à l'aide du clavier en décomposant chaques moteurs. Nous avons ensuite appliqué cela à la manette de jeu et au leap motion. Le mouvement n'étant pas naturel nous avons décidé d'implémenter notre propre code permettant de contrôler le bras robotique de manière la plus linéaire possible soit des mouvements en x, y z.
+          Cette mise en équation du mouvement nous a permis de mettre en place les débuts pour le contrôle avec la caméra, soit indiquer la position que le robot doit atteindre pour attraper un objet. En parallèle une autre partie du groupe travaillait sur la reconnaissance du plateau et des objets présent via la caméra. Nous travaillons aussi sur la mise en place d'un IHM pour permettre un contrôle graphique de l'ensemble.</p>
 
 					<div class="row align-items-center" >
 <div class="col" >
 <img src="../img/results.jpg" style="width: 500px;">
 </div><div class="col">
           <h1>Conclusion du projet</h1>
-          <p>Nous obtenons donc finalement les courbes ci-contre. Ce sont pour nous des résultats concluants mais perfectible. Due à la crise sanitaire, nous avons eu 3 journées de séances en moins ainsi que l'impossibilité d'accéder à la salle de labo en dehors des heures de cours. Nous n'avons donc pas pu finaliser le projet. Avec plus de temps nous aurions voulu creer et tester un estimateur de masse (fait avec Matlab). Nous aurions pus aussi améliorer l'acquisiton de la vitesse qui se fait sur interruption mais possède des discontinuités. Enfin nous avons étudié le filtre de Kalman qui permet de faire une fusion des données des capteurs pour en supprimer les bruits, nous avons malheureusement pas eu le temps d'appliquer cela. </p>
+          <p>Le projet nous a permis de comprendre les différentes façons de contrôler un bras robotisé ainsi que ses problèmatiques en termes de fluidité des mouvements et des contrôles de position. Nous avons atteints les objectifs posés malgrè un manque au niveau de la caméra. Une piste d'amélioration serait de reconnaitre des objets de formes multiples et de couleurs différentes ainsi que de rendre le mouvement linéaire plus performant et plus fluide. L'interface graphique est mise en place et avancée. Elle permet le contrôle du robot via les différents moyens à disposition (Manette, leap motion, souris).</p>
 </div></div>
 				<hr/>
 
@@ -95,5 +96,4 @@
 		
     </body>
 </html>
-
 
