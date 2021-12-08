@@ -38,7 +38,8 @@ private slots:
     void enregistrer_chore();
     void lire_chore();
     void goTo();
-    void leap();
+    void goTo_Cam();
+    void widget_leap();
     void widget_camera();
 
 

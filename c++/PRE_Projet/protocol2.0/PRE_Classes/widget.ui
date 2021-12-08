@@ -65,7 +65,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_5">
+       <widget class="QPushButton" name="pushButton_lire">
         <property name="text">
          <string>Lancer la chorégraphie</string>
         </property>
@@ -98,7 +98,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="pushButton_enregistrer">
         <property name="text">
          <string>Lancer enregistrement</string>
         </property>
@@ -516,7 +516,7 @@
       <string>Pince</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="pushButton_disable">
      <property name="geometry">
       <rect>
        <x>810</x>
@@ -747,7 +747,7 @@
       <string>Base</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_7">
+    <widget class="QPushButton" name="pushButton_enable">
      <property name="geometry">
       <rect>
        <x>270</x>
@@ -882,7 +882,7 @@
     <zorder>label_4</zorder>
     <zorder>label_5</zorder>
     <zorder>label_6</zorder>
-    <zorder>pushButton_2</zorder>
+    <zorder>pushButton_disable</zorder>
     <zorder>pushButton_3</zorder>
     <zorder>label_manette</zorder>
     <zorder>pushButton_6</zorder>
@@ -896,7 +896,7 @@
     <zorder>label_16</zorder>
     <zorder>label_17</zorder>
     <zorder>label_18</zorder>
-    <zorder>pushButton_7</zorder>
+    <zorder>pushButton_enable</zorder>
     <zorder>label_19</zorder>
     <zorder>label_20</zorder>
    </widget>
@@ -915,6 +915,51 @@
      </property>
      <property name="text">
       <string>Camera</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_routine">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>90</y>
+       <width>241</width>
+       <height>33</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Routine</string>
+     </property>
+    </widget>
+    <widget class="QwtCounter" name="Counter_Z_2">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>40</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>-0.250000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>0.250000000000000</double>
+     </property>
+    </widget>
+    <widget class="QwtCounter" name="Counter_X_2">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>241</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>-0.250000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>0.250000000000000</double>
      </property>
     </widget>
    </widget>

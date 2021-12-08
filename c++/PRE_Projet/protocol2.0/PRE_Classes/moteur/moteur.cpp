@@ -1,10 +1,9 @@
-#include "moteur.hpp"
+
 #include <unistd.h>
 
 #include <QDebug>
 #include "../widget.h"
-
-//#include "../manette/controle.hpp"
+#include "moteur.hpp"
 #include "../clavier/clavier.hpp"
 
 extern dynamixel::PortHandler *portHandler;
@@ -64,19 +63,6 @@ int Moteur::Torque_disable(){
 
 }
 
-
-
-int Moteur::Torque_disable_all(){
-
-  //Torque_disable_all();
-
-}
-
-int Moteur::Torque_enable_all(){
-
-  //Torque_enable_all();
-
-}
 
 
 int Moteur::Torque_enable(){

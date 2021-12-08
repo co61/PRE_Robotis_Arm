@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = PRE_Pattern
+TARGET = PRE_main
 TEMPLATE = app
 
 INCLUDEPATH += ../../../include/ ../../../include/dynamixel_sdk /usr/include/qwt /usr/include/opencv4
@@ -20,7 +20,7 @@ LIBS  += -ldxl_x64_cpp
 LIBS  += -lrt -lqwt-qt5 -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_videoio
 
 
-SOURCES += PRE_Manette.cpp\
+SOURCES += PRE_main.cpp\
         widget.cpp
 
 HEADERS  += widget.h

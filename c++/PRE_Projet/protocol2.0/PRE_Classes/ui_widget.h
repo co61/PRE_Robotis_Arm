@@ -55,12 +55,12 @@ public:
     QVBoxLayout *verticalLayout_2;
     QComboBox *comboBox;
     QProgressBar *progressBar_lire;
-    QPushButton *pushButton_5;
+    QPushButton *pushButton_lire;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
     QPlainTextEdit *plainTextEdit;
     QProgressBar *progressBar_enregistrer;
-    QPushButton *pushButton_4;
+    QPushButton *pushButton_enregistrer;
     QTextEdit *textEdit;
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout;
@@ -93,7 +93,7 @@ public:
     QLabel *label_4;
     QLabel *label_5;
     QLabel *label_6;
-    QPushButton *pushButton_2;
+    QPushButton *pushButton_disable;
     QLabel *label_7;
     QPushButton *pushButton_3;
     QLabel *label_manette;
@@ -108,7 +108,7 @@ public:
     QLabel *label_16;
     QLabel *label_17;
     QLabel *label_18;
-    QPushButton *pushButton_7;
+    QPushButton *pushButton_enable;
     QLabel *label_19;
     QLabel *label_20;
     QFrame *frame;
@@ -117,6 +117,9 @@ public:
     QLabel *label_21;
     QWidget *tab_2;
     QPushButton *pushButton_camera;
+    QPushButton *pushButton_routine;
+    QwtCounter *Counter_Z_2;
+    QwtCounter *Counter_X_2;
     QWidget *tab_6;
     QOpenGLWidget *openGLWidget;
     QPushButton *pushButton_leap;
@@ -182,10 +185,10 @@ public:
 
         verticalLayout_2->addWidget(progressBar_lire);
 
-        pushButton_5 = new QPushButton(verticalLayoutWidget_2);
-        pushButton_5->setObjectName(QString::fromUtf8("pushButton_5"));
+        pushButton_lire = new QPushButton(verticalLayoutWidget_2);
+        pushButton_lire->setObjectName(QString::fromUtf8("pushButton_lire"));
 
-        verticalLayout_2->addWidget(pushButton_5);
+        verticalLayout_2->addWidget(pushButton_lire);
 
         verticalLayoutWidget = new QWidget(tab);
         verticalLayoutWidget->setObjectName(QString::fromUtf8("verticalLayoutWidget"));
@@ -206,10 +209,10 @@ public:
 
         verticalLayout->addWidget(progressBar_enregistrer);
 
-        pushButton_4 = new QPushButton(verticalLayoutWidget);
-        pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
+        pushButton_enregistrer = new QPushButton(verticalLayoutWidget);
+        pushButton_enregistrer->setObjectName(QString::fromUtf8("pushButton_enregistrer"));
 
-        verticalLayout->addWidget(pushButton_4);
+        verticalLayout->addWidget(pushButton_enregistrer);
 
         textEdit = new QTextEdit(tab);
         textEdit->setObjectName(QString::fromUtf8("textEdit"));
@@ -382,9 +385,9 @@ public:
         label_6 = new QLabel(tab_3);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(130, 130, 67, 17));
-        pushButton_2 = new QPushButton(tab_3);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(810, 400, 221, 61));
+        pushButton_disable = new QPushButton(tab_3);
+        pushButton_disable->setObjectName(QString::fromUtf8("pushButton_disable"));
+        pushButton_disable->setGeometry(QRect(810, 400, 221, 61));
         label_7 = new QLabel(tab_3);
         label_7->setObjectName(QString::fromUtf8("label_7"));
         label_7->setGeometry(QRect(10, 10, 701, 651));
@@ -444,9 +447,9 @@ public:
         label_18 = new QLabel(tab_3);
         label_18->setObjectName(QString::fromUtf8("label_18"));
         label_18->setGeometry(QRect(780, 640, 67, 17));
-        pushButton_7 = new QPushButton(tab_3);
-        pushButton_7->setObjectName(QString::fromUtf8("pushButton_7"));
-        pushButton_7->setGeometry(QRect(270, 10, 221, 31));
+        pushButton_enable = new QPushButton(tab_3);
+        pushButton_enable->setObjectName(QString::fromUtf8("pushButton_enable"));
+        pushButton_enable->setGeometry(QRect(270, 10, 221, 31));
         label_19 = new QLabel(tab_3);
         label_19->setObjectName(QString::fromUtf8("label_19"));
         label_19->setGeometry(QRect(830, 490, 211, 17));
@@ -493,7 +496,7 @@ public:
         label_4->raise();
         label_5->raise();
         label_6->raise();
-        pushButton_2->raise();
+        pushButton_disable->raise();
         pushButton_3->raise();
         label_manette->raise();
         pushButton_6->raise();
@@ -507,7 +510,7 @@ public:
         label_16->raise();
         label_17->raise();
         label_18->raise();
-        pushButton_7->raise();
+        pushButton_enable->raise();
         label_19->raise();
         label_20->raise();
         tab_2 = new QWidget();
@@ -515,6 +518,19 @@ public:
         pushButton_camera = new QPushButton(tab_2);
         pushButton_camera->setObjectName(QString::fromUtf8("pushButton_camera"));
         pushButton_camera->setGeometry(QRect(236, 250, 241, 33));
+        pushButton_routine = new QPushButton(tab_2);
+        pushButton_routine->setObjectName(QString::fromUtf8("pushButton_routine"));
+        pushButton_routine->setGeometry(QRect(260, 90, 241, 33));
+        Counter_Z_2 = new QwtCounter(tab_2);
+        Counter_Z_2->setObjectName(QString::fromUtf8("Counter_Z_2"));
+        Counter_Z_2->setGeometry(QRect(360, 40, 241, 31));
+        Counter_Z_2->setMinimum(-0.250000000000000);
+        Counter_Z_2->setMaximum(0.250000000000000);
+        Counter_X_2 = new QwtCounter(tab_2);
+        Counter_X_2->setObjectName(QString::fromUtf8("Counter_X_2"));
+        Counter_X_2->setGeometry(QRect(30, 40, 241, 31));
+        Counter_X_2->setMinimum(-0.250000000000000);
+        Counter_X_2->setMaximum(0.250000000000000);
         tabWidget->addTab(tab_2, QString());
         tab_6 = new QWidget();
         tab_6->setObjectName(QString::fromUtf8("tab_6"));
@@ -625,9 +641,9 @@ public:
     void retranslateUi(QWidget *Widget)
     {
         Widget->setWindowTitle(QApplication::translate("Widget", "Widget", nullptr));
-        pushButton_5->setText(QApplication::translate("Widget", "Lancer la chor\303\251graphie", nullptr));
+        pushButton_lire->setText(QApplication::translate("Widget", "Lancer la chor\303\251graphie", nullptr));
         plainTextEdit->setPlainText(QApplication::translate("Widget", "NomDuFichier", nullptr));
-        pushButton_4->setText(QApplication::translate("Widget", "Lancer enregistrement", nullptr));
+        pushButton_enregistrer->setText(QApplication::translate("Widget", "Lancer enregistrement", nullptr));
         label_10->setText(QApplication::translate("Widget", "Bras 1", nullptr));
         label_11->setText(QApplication::translate("Widget", "Bras 2", nullptr));
         label_9->setText(QApplication::translate("Widget", "Base", nullptr));
@@ -642,7 +658,7 @@ public:
         label_4->setText(QApplication::translate("Widget", "Bras 3", nullptr));
         label_5->setText(QApplication::translate("Widget", "Base", nullptr));
         label_6->setText(QApplication::translate("Widget", "Pince", nullptr));
-        pushButton_2->setText(QApplication::translate("Widget", "Disable en position initiale", nullptr));
+        pushButton_disable->setText(QApplication::translate("Widget", "Disable en position initiale", nullptr));
         label_7->setText(QApplication::translate("Widget", "TextLabel", nullptr));
         pushButton_3->setText(QApplication::translate("Widget", "Connecter manette (Non Lin\303\251aire)", nullptr));
         label_manette->setText(QApplication::translate("Widget", "TextLabel", nullptr));
@@ -652,12 +668,13 @@ public:
         label_16->setText(QApplication::translate("Widget", "Bras 3", nullptr));
         label_17->setText(QApplication::translate("Widget", "Pince", nullptr));
         label_18->setText(QApplication::translate("Widget", "Base", nullptr));
-        pushButton_7->setText(QApplication::translate("Widget", "Enable le torque", nullptr));
+        pushButton_enable->setText(QApplication::translate("Widget", "Enable le torque", nullptr));
         label_19->setText(QApplication::translate("Widget", "Vitesse des moteurs", nullptr));
         label_20->setText(QApplication::translate("Widget", "Position des moteurs", nullptr));
         label_21->setText(QApplication::translate("Widget", "Utilisation de la Manette", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_3), QApplication::translate("Widget", "Controle", nullptr));
         pushButton_camera->setText(QApplication::translate("Widget", "Camera", nullptr));
+        pushButton_routine->setText(QApplication::translate("Widget", "Routine", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QApplication::translate("Widget", "Camera", nullptr));
         pushButton_leap->setText(QApplication::translate("Widget", "Leap Motion", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab_6), QApplication::translate("Widget", "Leap Motion", nullptr));

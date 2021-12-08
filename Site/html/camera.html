@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+
+<html lang="fr">
+	<head>
+	    <title>Camera - BRAS ROBOTIS</title>
+        
+		
+        <link type="text/css" rel="stylesheet" href="../css/bootstrap.min.css" />
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	    <link rel="icon" href="../img/favicon.png"/>
+	    
+
+	</head>
+	<body>
+			
+		<header>
+			<nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="projet.html">Bras Robotique</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="projet.html">Le projet</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="controle.html">Controle</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Camera</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="leap.html">Leap Motion</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="ihm.html">IHM</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Le groupe
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="#">Tanguy BOITTIN</a></li>
+            <li><a class="dropdown-item" href="#">Thibaut ROLLAND</a></li>
+            <li><a class="dropdown-item" href="#">Corentin REGNE</a></li>
+            <li><a class="dropdown-item" href="#">Axel NOUGIER</a></li>
+            <li><a class="dropdown-item" href="#">Arnaud MORE</a></li>
+            <li><a class="dropdown-item" href="#">Sarah BUCQUET</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+		</header>
+		
+
+			<main role="main" class="container">
+			
+					<div class="row align-items-center" style="margin-top:30px;">
+						<div class="col">
+					<h1>But du projet</h1>
+					<p> Le but du projet est d'instrumenter un pendule simple, nous souhaitons donc acquérir la position du pendule ainsi que la vitesse et l'accélération de celui-ci. Nous devrons acquérir ces différentes données sur un PC à l'aide d'un IHM. Aucun controle depuis l'IHM n'est requis, la liaison entre la carte lié au pendule et l'ordinateur sera donc simplex (Utilisation de la laision Série). En parrallèle de ce travail, nous étudierons la partie mécanique du pendule pour en obtenir les équations dynmique et finalement une courbe théorique. Nous pourrons alors comparer expérimentation et théorique.</p>
+</div>
+<div class="col" >
+<img src="../img/pres.png" style="    margin-left: 15%;">
+</div>
+</div>
+
+					<h1>Déroulement du projet</h1>
+					<p style="padding-bottom: 50px"> Nous avons à disposition 3 capteurs: le Potentiomètre pour obtenir la position angulaire du pendule, l'Encodeur pour acquérir la vitesse et l'Accéléromètre pour avoir l'accélération. Nous allons gérer ces capteurs à l'aide d'un microcontrolleur STM32F411RE, cette carte est rélié au PC par une laision série (Qui sert aussi d'alimentation dans notre cas) et enverra donc en continu les informations sur celle-ci avec un délai de 50ms entre chaque envoie. Les informations sont alors récupérées sur le PC à l'aide de Matlab sur lequel on trace les courbes des valeurs relevées en "temps réel". L'étude théorique du pendule faite sur papier est ensuite retranscrite sur SimuLink pour obtenir la courbe theorique des oscillations d'un pendule simple. On affiche ensuite cette courbe theorique sur la courbe expérimentale de la position angulaire.</p>
+
+					<div class="row align-items-center" >
+<div class="col" >
+<img src="../img/results.jpg" style="width: 500px;">
+</div><div class="col">
+          <h1>Conclusion du projet</h1>
+          <p>Nous obtenons donc finalement les courbes ci-contre. Ce sont pour nous des résultats concluants mais perfectible. Due à la crise sanitaire, nous avons eu 3 journées de séances en moins ainsi que l'impossibilité d'accéder à la salle de labo en dehors des heures de cours. Nous n'avons donc pas pu finaliser le projet. Avec plus de temps nous aurions voulu creer et tester un estimateur de masse (fait avec Matlab). Nous aurions pus aussi améliorer l'acquisiton de la vitesse qui se fait sur interruption mais possède des discontinuités. Enfin nous avons étudié le filtre de Kalman qui permet de faire une fusion des données des capteurs pour en supprimer les bruits, nous avons malheureusement pas eu le temps d'appliquer cela. </p>
+</div></div>
+				<hr/>
+
+
+
+		</main>
+
+		
+
+    <footer class="container">
+      <p>Projet réalisé à l'<a href="https://www.enib.fr" target="_blank">ENIB</a> - Automne 2021 </p>
+    </footer>
+		
+    </body>
+</html>
+
+

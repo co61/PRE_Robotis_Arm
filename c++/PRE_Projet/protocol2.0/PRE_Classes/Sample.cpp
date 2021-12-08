@@ -1,9 +1,8 @@
 /******************************************************************************\
-* Copyright (C) 2012-2014 Leap Motion, Inc. All rights reserved.               *
-* Leap Motion proprietary and confidential. Not for distribution.              *
-* Use subject to the terms of the Leap Motion SDK Agreement available at       *
-* https://developer.leapmotion.com/sdk_agreement, or another agreement         *
-* between Leap Motion and you, your company or other organization.             *
+* Réutilisation de l'exemple du Leap Motion SDK et adaptation au projet        *
+* https://developer.leapmotion.com/                                            *
+* Lancer "sudo leapd" dans un terminal pour utiliser le Leap Motion            *
+* PROJET PRE - ENIB 2021                                                       *
 \******************************************************************************/
 
 #include <iostream>
@@ -12,10 +11,6 @@
 
 #include "widget.h"
 #include "moteur/moteur.hpp"
-//#include "moteur/moteur.cpp"
-//#include "manette/controle.cpp"
-//#include "manette/controle.hpp"
-
 
 
 extern Moteur base;
@@ -23,6 +18,54 @@ extern Moteur bras1;
 extern Moteur bras2;
 extern Moteur bras3;
 extern Moteur pince;
+
+
+int getch() {
+#if defined(__linux__) || defined(__APPLE__)
+  struct termios oldt, newt;
+  int ch;
+  tcgetattr(STDIN_FILENO, &oldt);
+  newt = oldt;
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+  ch = getchar();
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+  return ch;
+#elif defined(_WIN32) || defined(_WIN64)
+  return _getch();
+#endif
+}
+
+int kbhit(void) {
+#if defined(__linux__) || defined(__APPLE__)
+  struct termios oldt, newt;
+  int ch;
+  int oldf;
+
+  tcgetattr(STDIN_FILENO, &oldt);
+  newt = oldt;
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+  ch = getchar();
+
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+  fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+  if (ch != EOF) {
+    ungetc(ch, stdin);
+    return 1;
+  }
+
+
+  return 0;
+#elif defined(_WIN32) || defined(_WIN64)
+  return _kbhit();
+#endif
+}
+
 
 
 using namespace Leap;
@@ -90,16 +133,43 @@ void SampleListener::onFrame(const Controller& controller) {
     const Hand hand = *hl;
     std::string handType = hand.isLeft() ? "Left hand" : "Right hand";
     
-    std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
+   /* std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
               << ", palm position: " << hand.palmPosition() << (hand.direction().pitch() * RAD_TO_DEG) << std::endl;
-              
+     */         
     // Get the hand's normal vector and direction
     const Vector normal = hand.palmNormal();
     const Vector direction = hand.direction();
 
     //oovePince(int(hand.palmPosition()[0]));
     if(hand.isRight()){
-      
+      float x = float(hand.palmPosition()[0])/400.0f;
+      float y = float(hand.palmPosition()[1])/800.0f;
+      float z = float(hand.palmPosition()[2])/400.0f;
+
+      //Borne de X
+      if(x > 0.24)
+        x = 0.24;
+      if(x < -0.24)
+        x = -0.24;
+      if((x > 0.08) && (x < 0.08))
+        x = 0.08;
+
+      //Borne de Y
+      if(y < 0.1)
+        y = 0.1;
+
+      //Borne de Z
+      if(z > 0.24)
+        z = 0.24;
+      if(z < -0.24)
+        z = -0.24;
+      if((z > -0.08) && (z < 0.08))
+        z = 0.08;
+
+      printf("x: %f  y: %f  z: %f \n",x,y,z);
+      Angles anglesR=calculate_angles(x,y,z);
+      Angles anglesD = anglesToDegree(anglesR);
+      Angles anglesP = anglesToPosition(anglesR);
       //Suit la position de la main
       bras1.position(2350 - int(hand.palmPosition()[1]));
       bras2.position(2200 - int(hand.palmPosition()[1]));
@@ -107,131 +177,20 @@ void SampleListener::onFrame(const Controller& controller) {
       //Suit l'angle de la main
       bras3.position(2000 - int(10*(hand.direction().pitch() * RAD_TO_DEG)));
 
-      base.position(2000 - int(500*hand.direction()[0]));
+      base.position(2000 - int(800*hand.direction()[0]));
+
+      pince.position(600-500*hand.pinchStrength());
+
+      printf("Pinch: %f", hand.pinchStrength());
+
+      //goToPosition(anglesP);
       
       }
-    // Calculate the hand's pitch, roll, and yaw angles
-    /*
-    std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
-              << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
-              << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << std::endl;
-    
 
-    // Get the Arm bone
-    Arm arm = hand.arm();
-    std::cout << std::string(2, ' ') <<  "Arm direction: " << arm.direction()
-              << " wrist position: " << arm.wristPosition()
-              << " elbow position: " << arm.elbowPosition() << std::endl;
-              
-
-    // Get fingers
-    const FingerList fingers = hand.fingers();
-    for (FingerList::const_iterator fl = fingers.begin(); fl != fingers.end(); ++fl) {
-      const Finger finger = *fl;
-      std::cout << std::string(4, ' ') <<  fingerNames[finger.type()]
-                << " finger, id: " << finger.id()
-                << ", length: " << finger.length()
-                << "mm, width: " << finger.width() << std::endl;
-
-      // Get finger bones
-      for (int b = 0; b < 4; ++b) {
-        Bone::Type boneType = static_cast<Bone::Type>(b);
-        Bone bone = finger.bone(boneType);
-        std::cout << std::string(6, ' ') <<  boneNames[boneType]
-                  << " bone, start: " << bone.prevJoint()
-                  << ", end: " << bone.nextJoint()
-                  << ", direction: " << bone.direction() << std::endl;
-      }
-    }
-    */
   }
 
-  // Get tools
-  const ToolList tools = frame.tools();
-  for (ToolList::const_iterator tl = tools.begin(); tl != tools.end(); ++tl) {
-    const Tool tool = *tl;
-    std::cout << std::string(2, ' ') <<  "Tool, id: " << tool.id()
-              << ", position: " << tool.tipPosition()
-              << ", direction: " << tool.direction() << std::endl;
-  }
 
-  // Get gestures
-  const GestureList gestures = frame.gestures();
-  for (int g = 0; g < gestures.count(); ++g) {
-    Gesture gesture = gestures[g];
-
-    switch (gesture.type()) {
-      case Gesture::TYPE_CIRCLE:
-      {
-
-        CircleGesture circle = gesture;
-        std::string clockwiseness;
-
-        if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
-          clockwiseness = "clockwise";
-        } else {
-          clockwiseness = "counterclockwise";
-        }
-
-        // Calculate angle swept since last frame
-        float sweptAngle = 0;
-        if (circle.state() != Gesture::STATE_START) {
-          CircleGesture previousUpdate = CircleGesture(controller.frame(1).gesture(circle.id()));
-          sweptAngle = (circle.progress() - previousUpdate.progress()) * 2 * PI;
-        }
-        std::cout << std::string(2, ' ')
-                  << "Circle id: " << gesture.id()
-                  << ", state: " << stateNames[gesture.state()]
-                  << ", progress: " << circle.progress()
-                  << ", radius: " << circle.radius()
-                  << ", angle " << sweptAngle * RAD_TO_DEG
-                  <<  ", " << clockwiseness << std::endl;
-        break;
-      }
-      case Gesture::TYPE_SWIPE:
-      {
-        SwipeGesture swipe = gesture;
-        std::cout << std::string(2, ' ')
-          << "Swipe id: " << gesture.id()
-          << ", state: " << stateNames[gesture.state()]
-          << ", direction: " << swipe.direction()
-          << ", speed: " << swipe.speed() << std::endl;
-
-        if(swipe.direction()[0]>0)
-          pince.position(800);
-        else
-          pince.position(0);
-        break;
-      }
-      case Gesture::TYPE_KEY_TAP:
-      {
-
-        pince.position(0);
-        KeyTapGesture tap = gesture;
-        std::cout << std::string(2, ' ')
-          << "Key Tap id: " << gesture.id()
-          << ", state: " << stateNames[gesture.state()]
-          << ", position: " << tap.position()
-          << ", direction: " << tap.direction()<< std::endl;
-        break;
-      }
-      case Gesture::TYPE_SCREEN_TAP:
-      {
-        ScreenTapGesture screentap = gesture;
-        std::cout << std::string(2, ' ')
-          << "Screen Tap id: " << gesture.id()
-          << ", state: " << stateNames[gesture.state()]
-          << ", position: " << screentap.position()
-          << ", direction: " << screentap.direction()<< std::endl;
-        break;
-      }
-      default:
-        std::cout << std::string(2, ' ')  << "Unknown gesture type." << std::endl;
-        break;
-    }
-  }
-
-  if (!frame.hands().isEmpty() || !gestures.isEmpty()) {
+  if (!frame.hands().isEmpty()) {
     std::cout << std::endl;
   }
 
@@ -279,7 +238,23 @@ void leap(){
 
   // Keep this process running until Enter is pressed
   std::cout << "Press Enter to quit..." << std::endl;
-  std::cin.get();
+
+  int quit = 1;
+  while(quit){
+    int chr = getch();
+    switch(chr){
+      case 'a':
+        pince.moove(40);
+        break;
+      case 'q':
+        pince.moove(-40);
+        break;
+      default:
+        quit = 0;
+        break;
+
+    }
+  }
 
   // Remove the sample listener when done
   controller.removeListener(listener);
