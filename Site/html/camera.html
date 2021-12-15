@@ -72,30 +72,31 @@
 </div>
 <div class="row align-items-center" style="margin-top:30px;">
   <div class="col" >
+<img src="../img/Matrice_transformation_perspective.png" style="width: 500px;">
+</div>
+	<div class="col" >
 					<h1>Déroulement</h1>
 					<p style="padding-bottom: 50px"> Nous avons tout d'abord décidé en début de semestre, d'acheter une caméra 3D, la Astra Pro de chez ORBBEC. Cette caméra 3D peut nous forunir une visualisation en couleur de la scène ainsi que une image des profondeurs détectés. Pour détecter l'object sur le plateau, nous avons utilisé OpenCV, cependant, celui-ci n'avait pas accés à la caméra de profondeur en même temps que la caméra couleur du systèmes 3D Astra Pro. Sans la possibilité de synchronisation de ces deux images nous ne pouvions les utiliser correctement. Etant donné le temps restant pour finir le projet nous avons décidé de nous concentrer sur l'utilisation d'une caméra normale pour détecter les contours du plateau. Puis nous avons mis en place la détection de l'objet dans ce plan. Pour cela nous avons dû transposer l'image du plateau déformé à cause de la perspective à une image du plateau en 2D. Cela nous permet d'obtenir les coordonnées de la balle en pixel sur l'image. Puis connaissant les dimensions du plateau et la position des points détectés, nous avons pu passer ces coordonnées dans le repère réel. </p>
 </div>
-<div class="col" >
-<img src="../img/Matrice_transformation_perspective.png" style="width: 500px;">
-</div>
+
 				</div>	
           <div class="row align-items-center" >
 
 <div class="col">
-<img src="../img/detection_plateau.jpg" style="width: 500px;">
+<img src="../img/detection_plateau.png" style="width: 500px;">
 </div>
 <div class="col">
-<img src="../img/detection_coin.jpg" style="width: 500px;">
+<img src="../img/detection_coin.png" style="width: 500px;">
 </div>
 </div>
 
 <div class="row align-items-center" >
 
 <div class="col">
-<img src="../img/detection_coin_balle.jpg" style="width: 500px;">
+<img src="../img/detection_coin_balle.png" style="width: 500px;">
 </div>
 <div class="col">
-<img src="../img/perpective_en_2d.jpg" style="width: 500px;">
+<img src="../img/perpective_en_2d.png" style="width: 500px;">
 </div>
   </div>
 				<hr/>
