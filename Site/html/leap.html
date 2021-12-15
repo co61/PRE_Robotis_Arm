@@ -64,15 +64,15 @@
 					<div class="row align-items-center" style="margin-top:30px;">
 						<div class="col">
 					<h1>But du projet</h1>
-					<p> Le Leap Motion est un module de suivi optique des mains. Il analyse l'image obtenue afin d'en extraire le squelette de l'ensemble du bras à partir du coude. Ce processus permet d'obtenir une reprénsentation présice des mouvements les plus petits, comme ceux des phalanges. Le Leap Motion est utilisé dans de nombreux cadres d'applications, notamment comme interface graphique. Le point qui le différencie également est que les traitements se font en temps réel.</p><
-					/div>
+					<p> Le Leap Motion est un module de suivi optique des mains. Il analyse l'image obtenue afin d'en extraire le squelette de l'ensemble du bras à partir du coude. Ce processus permet d'obtenir une reprénsentation présice des mouvements les plus petits, comme ceux des phalanges. Le Leap Motion est utilisé dans de nombreux cadres d'applications, notamment comme interface graphique. Le point qui le différencie également est que les traitements se font en temps réel.</p>
+							</div>
 <div class="col" >
 <img src="../img/LeapMotion.jpg" style="    margin-left: 15%;">
 </div>
 </div>
 
 					<h1>Déroulement du projet</h1>
-					<p style="padding-bottom: 50px"> Nous avons à disposition 3 capteurs: le Potentiomètre pour obtenir la position angulaire du pendule, l'Encodeur pour acquérir la vitesse et l'Accéléromètre pour avoir l'accélération. Nous allons gérer ces capteurs à l'aide d'un microcontrolleur STM32F411RE, cette carte est rélié au PC par une laision série (Qui sert aussi d'alimentation dans notre cas) et enverra donc en continu les informations sur celle-ci avec un délai de 50ms entre chaque envoie. Les informations sont alors récupérées sur le PC à l'aide de Matlab sur lequel on trace les courbes des valeurs relevées en "temps réel". L'étude théorique du pendule faite sur papier est ensuite retranscrite sur SimuLink pour obtenir la courbe theorique des oscillations d'un pendule simple. On affiche ensuite cette courbe theorique sur la courbe expérimentale de la position angulaire.</p>
+					<p style="padding-bottom: 50px"> Dans notre cadre de travail, le Leap Motion a pour but de récupérer la position de la main afin de l'envoyer au robot qui convertira la position reçue pour la pince soit au même endroit que la main. On récupère également la direction de la main qui permettra de donner l'inclinaison de la pince au robot. Enfin, le Leap Motion permet de reconnaître le mouvement de "pince" de la main. On utilisera ce mouvement afin de l'appliquer au robot.</p>
 
 					<div class="row align-items-center" >
 <div class="col" >
