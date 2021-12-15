@@ -13,6 +13,8 @@
 #include "moteur/moteur.hpp"
 
 
+extern QApplication a;
+
 extern Moteur base;
 extern Moteur bras1;
 extern Moteur bras2;
@@ -179,13 +181,15 @@ void SampleListener::onFrame(const Controller& controller) {
 
       base.position(2000 - int(800*hand.direction()[0]));
 
-      pince.position(600-500*hand.pinchStrength());
+      //pince.position(600-500*hand.pinchStrength());
 
       printf("Pinch: %f", hand.pinchStrength());
 
       //goToPosition(anglesP);
       
       }
+
+      a.processEvents();
 
   }
 
