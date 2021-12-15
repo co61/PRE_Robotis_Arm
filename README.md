@@ -14,16 +14,16 @@ Axel NOUGIER
 
 Pour lancer l'IHM il faut lancer "./PRE_main" se trouvant dans le dossier "PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes"
 
-PRE_main
-|
-|-- Slot: Contient les Slot pour les Widget QT \n
-| \n
-|-- Moteur: Contient la representation orientée objets des moteurs
-|
-|-- Manette: Contient les utilisations d'une manette pour controler le robot
-|
-|-- Camera: Contient l'utilisation de la camera pour detecter la balle
-|
-|-- PRE_main.cpp: main du projet qui lance l'ihm Qt
-|
-|-- widget.cpp et widget.ui: IHM Qt avec connexions des signaux/slots
+PRE_main</br>
+|</br>
+|-- Slot: Contient les Slot pour les Widget QT </br>
+| </br>
+|-- Moteur: Contient la representation orientée objets des moteurs</br>
+|</br>
+|-- Manette: Contient les utilisations d'une manette pour controler le robot</br>
+|</br>
+|-- Camera: Contient l'utilisation de la camera pour detecter la balle</br>
+|</br>
+|-- PRE_main.cpp: main du projet qui lance l'ihm Qt</br>
+|</br>
+|-- widget.cpp et widget.ui: IHM Qt avec connexions des signaux/slots</br>
