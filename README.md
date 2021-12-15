@@ -16,8 +16,8 @@ Pour lancer l'IHM il faut lancer "./PRE_main" se trouvant dans le dossier "PRE_R
 
 PRE_main
 |
-|-- Slot: Contient les Slot pour les Widget QT
-|
+|-- Slot: Contient les Slot pour les Widget QT \n
+| \n
 |-- Moteur: Contient la representation orientée objets des moteurs
 |
 |-- Manette: Contient les utilisations d'une manette pour controler le robot
