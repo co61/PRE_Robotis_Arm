@@ -3,11 +3,11 @@ Control of a robotic arm with different tools.²
 
 # Project by
 
-Thibaut ROLLAND
-Arnaud MORE
-Corentin REGNE 
-Sarah BUCQUET
-Tanguy BOITTIN
+Thibaut ROLLAND - 
+Arnaud MORE - 
+Corentin REGNE - 
+Sarah BUCQUET - 
+Tanguy BOITTIN - 
 Axel NOUGIER
 
 # Orginisation des fichiers
