@@ -44,12 +44,12 @@
             Le groupe
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Tanguy BOITTIN</a></li>
-            <li><a class="dropdown-item" href="#">Thibaut ROLLAND</a></li>
-            <li><a class="dropdown-item" href="#">Corentin REGNE</a></li>
-            <li><a class="dropdown-item" href="#">Axel NOUGIER</a></li>
+            <li><a class="dropdown-item" href="https://github.com/TanBoi">Tanguy BOITTIN</a></li>
+            <li><a class="dropdown-item" href="https://github.com/tibo29450">Thibaut ROLLAND</a></li>
+            <li><a class="dropdown-item" href="https://github.com/co61">Corentin REGNE</a></li>
+            <li><a class="dropdown-item" href="https://github.com/a7nougie">Axel NOUGIER</a></li>
             <li><a class="dropdown-item" href="#">Arnaud MORE</a></li>
-            <li><a class="dropdown-item" href="#">Sarah BUCQUET</a></li>
+            <li><a class="dropdown-item" href="https://github.com/MissPingouin">Sarah BUCQUET</a></li>
           </ul>
         </li>
       </ul>
@@ -63,16 +63,54 @@
 			
 					<div class="row align-items-center" style="margin-top:30px;">
 						<div class="col">
-					<h1>But du projet</h1>
-					<p> Le but du projet est d'instrumenter un pendule simple, nous souhaitons donc acquérir la position du pendule ainsi que la vitesse et l'accélération de celui-ci. Nous devrons acquérir ces différentes données sur un PC à l'aide d'un IHM. Aucun controle depuis l'IHM n'est requis, la liaison entre la carte lié au pendule et l'ordinateur sera donc simplex (Utilisation de la laision Série). En parrallèle de ce travail, nous étudierons la partie mécanique du pendule pour en obtenir les équations dynmique et finalement une courbe théorique. Nous pourrons alors comparer expérimentation et théorique.</p>
+					<h1>Utilisation de Qt</h1>
+					<p> On utilise Qt pour réaliser une interface homme-machine. 
+            Le but est de pouvoir accéder facilement et graphiquement au différents modules que nous avons réalisé.
+            De plus, l'utilisation des Signaux/Slots (concept d'évènements) reliés à des bouttons/sliders offre la possibilité de gérer automatiquement
+            la gestion des multiples fonctions.
+
+          </p>
 </div>
 <div class="col" >
-<img src="../img/pres.png" style="    margin-left: 15%;">
+<img src="../img/ihm/qt.png" style="width:400px;    margin-left: 15%;">
 </div>
 </div>
 
-					<h1>Déroulement du projet</h1>
-					<p style="padding-bottom: 50px"> Nous avons à disposition 3 capteurs: le Potentiomètre pour obtenir la position angulaire du pendule, l'Encodeur pour acquérir la vitesse et l'Accéléromètre pour avoir l'accélération. Nous allons gérer ces capteurs à l'aide d'un microcontrolleur STM32F411RE, cette carte est rélié au PC par une laision série (Qui sert aussi d'alimentation dans notre cas) et enverra donc en continu les informations sur celle-ci avec un délai de 50ms entre chaque envoie. Les informations sont alors récupérées sur le PC à l'aide de Matlab sur lequel on trace les courbes des valeurs relevées en "temps réel". L'étude théorique du pendule faite sur papier est ensuite retranscrite sur SimuLink pour obtenir la courbe theorique des oscillations d'un pendule simple. On affiche ensuite cette courbe theorique sur la courbe expérimentale de la position angulaire.</p>
+					<h1>Organisation du programme</h1>
+					<p > 
+            L'IHM est séparé en 4 tabs.
+            <h5>Enregistrement et Lecture</h5>
+
+            <p style="padding-left: 3%;">
+            - Lire la position en temps réels des différents moteurs du bras.<br/>
+            - Enregsitrer une chorégraphie du robot dans un fichier et reproduire cette chorégraphie.<br/>
+            - Donner des coordonnées X,Y et Z dans le repère du bras, le bras vas à cette position dans le but d'ttrapper un objet.
+          </p>
+
+            <h5>Controle</h5>
+
+            <p style="padding-left: 3%;">
+              - Enable et disable le torque du bras (prise moteur).<br/>
+              - Positionner les moteurs individuellement via des sliders.<br/>
+              - Modifier la vitesse des moteurs. (Seul le slider du bras 2 envoie les vitesses demandées). <br/>
+              - Prendre le controle du bras via une manette (en mode linéaire ou classique).
+
+
+            </p>
+            <h5>Camera</h5>
+            <p style="padding-left: 3%;">
+              Blablablabla
+            </p>
+            <h5>Leap Motion</h5>
+            <p style="padding-left: 3%;">
+              - Prendre le controle du bras via le Leap Motion. <br/>
+              - Le Leap Motion détecte la main et reproduit les mouvements sur le bras.<br/>
+              - Il faut lancer dans un autre terminal la commande "sudo leapd" pour connecter le Leap Motion.
+
+
+            </p>
+          
+          </p>
 
 					<div class="row align-items-center" >
 <div class="col" >

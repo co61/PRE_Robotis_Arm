@@ -16,7 +16,7 @@ INCLUDEPATH += ../../../include/ ../../../include/dynamixel_sdk /usr/include/qwt
 
 LIBS  += ../lib/x64/libLeap.so -Wl,-rpath,../lib/x64
 LIBS  += -lboost_system -lboost_filesystem
-LIBS  += -ldxl_x64_cpp
+LIBS  += -ldxl_x64_cpp 
 LIBS  += -lrt -lqwt-qt5 -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_imgcodecs -lopencv_videoio
 
 

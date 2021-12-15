@@ -54,11 +54,6 @@
 /********* DYNAMIXEL Model definition *********
 ***** (Use only one definition at a time) *****/
 #define X_SERIES // X330, X430, X540, 2X430
-// #define PRO_SERIES // H54, H42, M54, M42, L54, L42
-// #define PRO_A_SERIES // PRO series with (A) firmware update.
-// #define P_SERIES  // PH54, PH42, PM54
-// #define XL320  // [WARNING] Operating Voltage : 7.4V
-// #define MX_SERIES // MX series with 2.0 firmware update.
 
 // Control table address
 #if defined(X_SERIES) || defined(MX_SERIES)

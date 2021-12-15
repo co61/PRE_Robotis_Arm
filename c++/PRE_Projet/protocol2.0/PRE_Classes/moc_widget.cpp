@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Widget_t {
-    QByteArrayData data[23];
-    char stringdata0[238];
+    QByteArrayData data[24];
+    char stringdata0[250];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -50,10 +50,11 @@ QT_MOC_LITERAL(15, 154, 17), // "enregistrer_chore"
 QT_MOC_LITERAL(16, 172, 10), // "lire_chore"
 QT_MOC_LITERAL(17, 183, 4), // "goTo"
 QT_MOC_LITERAL(18, 188, 8), // "goTo_Cam"
-QT_MOC_LITERAL(19, 197, 11), // "widget_leap"
-QT_MOC_LITERAL(20, 209, 13), // "widget_camera"
-QT_MOC_LITERAL(21, 223, 7), // "disable"
-QT_MOC_LITERAL(22, 231, 6) // "enable"
+QT_MOC_LITERAL(19, 197, 11), // "goTo_Detect"
+QT_MOC_LITERAL(20, 209, 11), // "widget_leap"
+QT_MOC_LITERAL(21, 221, 13), // "widget_camera"
+QT_MOC_LITERAL(22, 235, 7), // "disable"
+QT_MOC_LITERAL(23, 243, 6) // "enable"
 
     },
     "Widget\0widget_lecture\0\0widget_manette\0"
@@ -61,8 +62,8 @@ QT_MOC_LITERAL(22, 231, 6) // "enable"
     "pos\0bras1_moove\0bras2_moove\0bras3_moove\0"
     "base_moove\0test_moove\0Moteur\0mot\0"
     "vitesse\0enregistrer_chore\0lire_chore\0"
-    "goTo\0goTo_Cam\0widget_leap\0widget_camera\0"
-    "disable\0enable"
+    "goTo\0goTo_Cam\0goTo_Detect\0widget_leap\0"
+    "widget_camera\0disable\0enable"
 };
 #undef QT_MOC_LITERAL
 
@@ -72,7 +73,7 @@ static const uint qt_meta_data_Widget[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      18,   14, // methods
+      19,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -80,24 +81,25 @@ static const uint qt_meta_data_Widget[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  104,    2, 0x08 /* Private */,
-       3,    0,  105,    2, 0x08 /* Private */,
-       4,    0,  106,    2, 0x08 /* Private */,
-       5,    1,  107,    2, 0x08 /* Private */,
-       7,    1,  110,    2, 0x08 /* Private */,
-       8,    1,  113,    2, 0x08 /* Private */,
-       9,    1,  116,    2, 0x08 /* Private */,
-      10,    1,  119,    2, 0x08 /* Private */,
-      11,    2,  122,    2, 0x08 /* Private */,
-      14,    0,  127,    2, 0x08 /* Private */,
-      15,    0,  128,    2, 0x08 /* Private */,
-      16,    0,  129,    2, 0x08 /* Private */,
-      17,    0,  130,    2, 0x08 /* Private */,
-      18,    0,  131,    2, 0x08 /* Private */,
-      19,    0,  132,    2, 0x08 /* Private */,
-      20,    0,  133,    2, 0x08 /* Private */,
-      21,    0,  134,    2, 0x08 /* Private */,
-      22,    0,  135,    2, 0x08 /* Private */,
+       1,    0,  109,    2, 0x08 /* Private */,
+       3,    0,  110,    2, 0x08 /* Private */,
+       4,    0,  111,    2, 0x08 /* Private */,
+       5,    1,  112,    2, 0x08 /* Private */,
+       7,    1,  115,    2, 0x08 /* Private */,
+       8,    1,  118,    2, 0x08 /* Private */,
+       9,    1,  121,    2, 0x08 /* Private */,
+      10,    1,  124,    2, 0x08 /* Private */,
+      11,    2,  127,    2, 0x08 /* Private */,
+      14,    0,  132,    2, 0x08 /* Private */,
+      15,    0,  133,    2, 0x08 /* Private */,
+      16,    0,  134,    2, 0x08 /* Private */,
+      17,    0,  135,    2, 0x08 /* Private */,
+      18,    0,  136,    2, 0x08 /* Private */,
+      19,    0,  137,    2, 0x08 /* Private */,
+      20,    0,  138,    2, 0x08 /* Private */,
+      21,    0,  139,    2, 0x08 /* Private */,
+      22,    0,  140,    2, 0x08 /* Private */,
+      23,    0,  141,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -109,6 +111,7 @@ static const uint qt_meta_data_Widget[] = {
     QMetaType::Void, QMetaType::Int,    6,
     QMetaType::Void, QMetaType::Int,    6,
     QMetaType::Void, QMetaType::Int, 0x80000000 | 12,    6,   13,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -142,10 +145,11 @@ void Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         case 11: _t->lire_chore(); break;
         case 12: _t->goTo(); break;
         case 13: _t->goTo_Cam(); break;
-        case 14: _t->widget_leap(); break;
-        case 15: _t->widget_camera(); break;
-        case 16: _t->disable(); break;
-        case 17: _t->enable(); break;
+        case 14: _t->goTo_Detect(); break;
+        case 15: _t->widget_leap(); break;
+        case 16: _t->widget_camera(); break;
+        case 17: _t->disable(); break;
+        case 18: _t->enable(); break;
         default: ;
         }
     }
@@ -180,13 +184,13 @@ int Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 18)
+        if (_id < 19)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 18;
+        _id -= 19;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 18)
+        if (_id < 19)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 18;
+        _id -= 19;
     }
     return _id;
 }

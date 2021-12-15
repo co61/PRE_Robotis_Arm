@@ -1,8 +1,8 @@
 /* Gestion de l'IHM - widget.h
  * Fonctions Slot dans dossier slot:
- *    - Lecture -> Slot tab 1
+ *    - Lecture ->  Slot tab 1
  *    - Controle -> Slot tab 2
- *    - Camera -> Slot tab 3
+ *    - Camera ->   Slot tab 3
  *
  * Include:
  *    - moteur.hpp
@@ -50,6 +50,8 @@ extern Moteur pince;
 
 extern QApplication a;
 
+float x_balle;
+float y_balle;
 
 void Widget::goTo(){
   Angles anglesR=calculate_angles(ui->Counter_X->value(),ui->Counter_Y->value(),ui->Counter_Z->value());
@@ -62,6 +64,43 @@ void Widget::goTo(){
 
   //Position posPince = getPositionPince3D();
   //printf("Position  x : %g, y : %g, z : %g\n", posPince.x, posPince.y, posPince.z);
+
+}
+
+void Widget::goTo_Detect(){
+
+
+  bras1.position(2000);
+  bras2.position(1800);
+  bras3.position(2000);
+
+
+  usleep(3000000);
+
+  pince.position(1000);
+  Angles anglesR=calculate_angles(0.1,0.2,0.1);
+  Angles anglesD = anglesToDegree(anglesR);
+  Angles anglesP = anglesToPosition(anglesR);
+  goToPosition(anglesP);
+
+
+  usleep(4000000);
+
+  anglesR=calculate_angles(0.1,0.04,0.1);
+  anglesD = anglesToDegree(anglesR);
+  anglesP = anglesToPosition(anglesR);
+  goToPosition(anglesP);
+
+  usleep(3000000);
+
+  pince.position(400);
+
+  usleep(3000000);
+
+  anglesR=calculate_angles(0.1,0.04,0.1);
+  anglesD = anglesToDegree(anglesR);
+  anglesP = anglesToPosition(anglesR);
+  goToPosition(anglesP);
 
 }
 
@@ -197,7 +236,7 @@ void  Widget::enable(){
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::Widget) 
 {
   ui->setupUi(this);
 
@@ -247,6 +286,7 @@ Widget::Widget(QWidget *parent) :
 
   // Tab CAMERA
   connect(ui->pushButton_routine, SIGNAL(clicked()), SLOT(goTo_Cam()));
+  connect(ui->pushButton_detect, SIGNAL(clicked()), SLOT(goTo_Detect()));
   connect(ui->pushButton_camera, SIGNAL(clicked()), SLOT(widget_camera()));
 
   // Tab LEAP
