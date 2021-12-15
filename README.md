@@ -14,7 +14,7 @@ Axel NOUGIER
 
 Pour lancer l'IHM il faut lancer "./PRE_main" se trouvant dans le dossier "PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes", les autres dossier dans "protocol2.0" sont d'autres versions plus vieilles.
 
-PRE_main</br>
+PRE_Classes</br>
 |</br>
 |-- Slot: Contient les Slot pour les Widget QT </br>
 | </br>
