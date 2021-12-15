@@ -12,7 +12,7 @@ Axel NOUGIER
 
 # Orginisation des fichiers
 
-Pour lancer l'IHM il faut lancer "./PRE_main" se trouvant dans le dossier "PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes"
+Pour lancer l'IHM il faut lancer "./PRE_main" se trouvant dans le dossier "PRE_Robotis_Arm/c++/PRE_Projet/protocol2.0/PRE_Classes", les autres dossier dans "protocol2.0" sont d'autres versions plus vieilles.
 
 PRE_main</br>
 |</br>
